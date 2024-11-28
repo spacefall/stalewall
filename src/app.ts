@@ -31,6 +31,6 @@ export function loadProviders() {
 }
 
 export async function serveProvider(): Promise<FinalJson> {
-    return await providerArray[randInt(providerArray.length)](settings);
+    return providerArray[randInt(providerArray.length)](settings);
 }
 

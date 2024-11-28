@@ -1,5 +1,5 @@
 import * as http from "node:http";
-import {loadProviders, serveProvider} from "./app";
+import {loadProviders, serveProvider} from "../src/app";
 
 
 http.createServer((req, res) => {
@@ -14,14 +14,9 @@ http.createServer((req, res) => {
 
     res.writeHead(200, { 'Content-Type': 'application/json' });
 
-    // prints hello world + queries if there's at least 1
-    /* res.write("Hello World!");
-    if (q.searchParams.size !== 0) {
-        res.write("\nReqs:\n");
-        q.searchParams.forEach((v, k) => {
-            res.write(`${k}=${v}\n`)
-        })
-    } */
+    // prints hello world + queries 
+    /* res.write(`'ello + ${url.searchParams}`);*/
+
     serveProvider().then((json) => {
         res.write(JSON.stringify(json));
         //console.log(json);

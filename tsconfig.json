@@ -1,12 +1,26 @@
 {
-  "compilerOptions": {
-    "target": "es2021",
-    "module": "commonjs",
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
+  "compilerOptions": {"lib": ["ESNext"],
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleDetection": "force",
+    "allowJs": true,
+
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true,
+    "noEmit": true,
+
     "strict": true,
     "skipLibCheck": true,
+    "noFallthroughCasesInSwitch": true,
+
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noPropertyAccessFromIndexSignature": true,
+
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
     "outDir": "dist"
   },
-  "include": ["src"]
+  "include": ["src", "adapters"]
 }
