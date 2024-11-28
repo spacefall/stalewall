@@ -1,3 +1,9 @@
 export interface Settings {
-    quality: number
+    quality?: number
+
+    height?: number
+    width?: number
+    
+    proxy?: boolean
+    crop?: boolean
 }

@@ -10,5 +10,10 @@ export async function getJson(url: string): Promise<object> {
     throw new Error(`Response status: ${response.status}`);
   }
 
-  return await response.json();
+  return await response.json() as object;
+}
+
+
+export function numberBounds(num: number, min: number, max: number): number {
+  return Math.min(max, Math.max(min, num));
 }

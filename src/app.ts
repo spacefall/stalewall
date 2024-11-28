@@ -6,10 +6,6 @@ import type { FinalJson } from "./interfaces/stalewall";
 
 const providerArray: Array<(set: Settings) => FinalJson> = []
 
-const settings: Settings = {
-    quality: 100
-}
-
 //loads all providers in folder to providerArray
 export function loadProviders() {
     const files = fs.readdirSync(path.join(__dirname, "providers"));
@@ -30,7 +26,7 @@ export function loadProviders() {
     }
 }
 
-export async function serveProvider(): Promise<FinalJson> {
-    return providerArray[randInt(providerArray.length)](settings);
+export async function serveProvider(set: Settings): Promise<FinalJson> {
+    return providerArray[randInt(providerArray.length)](set);
 }
 

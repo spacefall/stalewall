@@ -1,4 +1,5 @@
 import { loadProviders, serveProvider } from "../src/app";
+import { parseQueries } from "../src/settings";
 
 loadProviders();
 
@@ -13,7 +14,8 @@ const server = Bun.serve({
     }
 
     //return new Response(`'ello + ${url.searchParams}`);
-    const apiResp = await serveProvider()
+    const set = parseQueries(url.searchParams);
+    const apiResp = await serveProvider(set);
     return new Response(JSON.stringify(apiResp), {headers: {"Content-Type": "application/json"}});
     
     //return new Response("shit broke", { status: 500 });
