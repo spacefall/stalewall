@@ -1,3 +1,4 @@
+// response json
 export interface InfoJson {
   desc?: {
     title?: string;

@@ -1,3 +1,4 @@
+// this is just the interface for the bing json response, it's here just to help with ts and vscode autocompletion
 export interface BingJson {
   images: Image[];
   tooltips: Tooltips;
