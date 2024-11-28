@@ -1,5 +1,6 @@
 {
-  "compilerOptions": {"lib": ["ESNext"],
+  "compilerOptions": {
+    "lib": ["ESNext"],
     "target": "ESNext",
     "module": "ESNext",
     "moduleDetection": "force",
@@ -22,5 +23,5 @@
     "forceConsistentCasingInFileNames": true,
     "outDir": "dist"
   },
-  "include": ["src", "adapters"]
+  "include": ["src", "adapters", "providers"]
 }
