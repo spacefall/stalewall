@@ -13,6 +13,15 @@ export async function getJson(url: string): Promise<object> {
     return (await response.json()) as object;
 }
 
+export async function getText(url: string): Promise<string> {
+    const response = await fetch(url);
+    if (!response.ok) {
+        throw new Error(`Response status: ${response.status}`);
+    }
+
+    return response.text();
+}
+
 // given num and max and min as boundries, returns num if num>min && num<max
 // otherwise it returns max if num>max or min if num<min
 export function numberBounds(num: number, min: number, max: number): number {
