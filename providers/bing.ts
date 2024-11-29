@@ -53,7 +53,8 @@ const markets = [
     "pt-BR",
 ];
 
-// chooses a random wallapaper from list and returns it in a json
+// Grabs a wallpaper from the Bing homepage api and returns it
+// noinspection JSUnusedGlobalSymbols
 export async function provide(set: Settings): Promise<FinalJson> {
     const url = `https://www.bing.com/HPImageArchive.aspx?format=js&n=8&desc=1&idx=${randInt(8)}&mkt=${markets[randInt(markets.length)]}`;
     const json = (await getJson(url)) as BingJson;
