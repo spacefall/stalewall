@@ -3,12 +3,9 @@ import * as path from "node:path";
 import { randInt } from "./utils";
 import type { FinalJson, Settings } from "./types";
 
-// Q: why is this array used to store providers?
-// A: it's the first way I thought of to load providers and serve them randomly (aka load'em into an array and access the array with Math.random)
-const providerArray: Array<(set: Settings) => FinalJson> = [];
-
 // loads providers from "providers" folder
-export function loadProviders() {
+export function devLoadProviders() {
+    const providerArray: Array<(set: Settings) => Promise<FinalJson>> = [];
     const providerPath = path.join(__dirname, "..", "providers");
     const files = fs.readdirSync(providerPath);
 
@@ -35,10 +32,12 @@ export function loadProviders() {
                 });
         }
     }
+    return providerArray;
 }
 
-// serves a random provider from providerArray
+/*// serves a random provider from providerArray
 // most of the work is done in the provider itself, so this function just pics a random provider
 export async function serveProvider(set: Settings): Promise<FinalJson> {
     return providerArray[randInt(providerArray.length)](set);
 }
+*/
