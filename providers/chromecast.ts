@@ -23,8 +23,8 @@ export async function provide(): Promise<FinalJson> {
 
     // I don't know if it's just a bun thing but ì decodeURIComponent will unescape \x sequences only in a repl
     // Here it doesn't work for some reason so \x gets replaced with % which does work
-    // I hate escape sequences after this.
-    const stringJson = decodeURIComponent(usefulString.replaceAll("\\x", "%"));
+	  // I hate escape sequences after this.
+    const stringJson = decodeURIComponent(usefulString.replaceAll("\\x", "%").replaceAll("\\\\", "\\"));
 
     // This json is just a series of nested arrays with strings, numbers and more in them
     // So I can't really give a type to this json unfortunately
