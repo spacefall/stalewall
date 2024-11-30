@@ -11,8 +11,9 @@
 	},
 	"formatter": {
 		"enabled": true,
-		"indentStyle": "space",
-		"indentWidth": 4
+		"useEditorconfig": true,
+		"formatWithErrors": false,
+		"lineWidth": 140
 	},
 	"organizeImports": {
 		"enabled": true
@@ -25,7 +26,8 @@
 	},
 	"javascript": {
 		"formatter": {
-			"quoteStyle": "double"
+			"quoteStyle": "double",
+			"semicolons": "always"
 		}
 	}
 }

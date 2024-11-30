@@ -1,20 +1,21 @@
 {
-  "name": "stalewall",
-  "version": "1.0.0",
-  "description": "",
-  "main": "dist/index.js",
-  "scripts": {
-    "build": "tsc"
-  },
-  "dependencies": {
-    "@types/node": "^22.9.3",
-    "cheerio": "^1.0.0"
-  },
-  "devDependencies": {
-    "@biomejs/biome": "1.9.4",
-    "@types/bun": "^1.1.14",
-    "ts-node": "^10.9.2",
-    "typescript": "^5.7.2"
-  },
-  "private": true
+    "name": "stalewall-api",
+    "version": "0.0.1",
+    "private": true,
+    "scripts": {
+        "deploy": "wrangler deploy",
+        "cfstart": "wrangler dev",
+        "start": "bun run adapters/bun.ts",
+        "cf-typegen": "wrangler types"
+    },
+    "dependencies": {
+        "cheerio": "^1.0.0"
+    },
+    "devDependencies": {
+        "@biomejs/biome": "1.9.4",
+        "@types/bun": "^1.1.14",
+        "typescript": "^5.7.2",
+        "@cloudflare/workers-types": "^4.20241127.0",
+        "wrangler": "^3.60.3"
+    }
 }
