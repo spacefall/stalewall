@@ -9,9 +9,9 @@ const server = Bun.serve({
 	async fetch(req) {
 		const url = new URL(req.url);
 
-		// stopping the favicon request from continuing, as it is kind of annoying
-		if (url.pathname === "/favicon.ico") {
-			return new Response("Favicon doesn't exist", { status: 404 });
+		// stopping any request not on root from continuing
+		if (url.pathname !== "/") {
+			return new Response("Requested api endpoint does not exist", { status: 404 });
 		}
 
 		try {
