@@ -4,8 +4,8 @@
     "private": true,
     "scripts": {
         "deploy": "wrangler deploy",
-        "cfstart": "wrangler dev",
-        "start": "bun run adapters/bun.ts",
+        "cfdev": "wrangler dev",
+        "dev": "bun run --hot adapters/bun.ts",
         "cf-typegen": "wrangler types"
     },
     "dependencies": {
