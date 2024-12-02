@@ -1,6 +1,5 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { randInt } from "./utils";
 import type { FinalJson, Settings } from "./types";
 
 // loads providers from "providers" folder
@@ -29,10 +28,3 @@ export function devLoadProviders() {
 	}
 	return providerArray;
 }
-
-/*// serves a random provider from providerArray
-// most of the work is done in the provider itself, so this function just pics a random provider
-export async function serveProvider(set: Settings): Promise<FinalJson> {
-    return providerArray[randInt(providerArray.length)](set);
-}
-*/
