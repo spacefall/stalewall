@@ -1,6 +1,6 @@
-import { parseQueries } from '../src/settings';
-import { providerArray } from '../src/providerList';
-import { randInt } from '../src/utils';
+import { parseQueries } from "../src/settings";
+import { providerArray } from "../src/providerList";
+import { randInt } from "../src/utils";
 
 export default {
 	async fetch(request, env, ctx): Promise<Response> {

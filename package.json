@@ -1,21 +1,21 @@
 {
-    "name": "stalewall-api",
-    "version": "0.0.1",
-    "private": true,
-    "scripts": {
-        "deploy": "wrangler deploy",
-        "cfdev": "wrangler dev",
-        "dev": "bun run --hot adapters/bun.ts",
-        "cf-typegen": "wrangler types"
-    },
-    "dependencies": {
-        "cheerio": "^1.0.0"
-    },
-    "devDependencies": {
-        "@biomejs/biome": "1.9.4",
-        "@types/bun": "^1.1.14",
-        "typescript": "^5.7.2",
-        "@cloudflare/workers-types": "^4.20241127.0",
-        "wrangler": "^3.60.3"
-    }
+	"name": "stalewall-api",
+	"version": "0.0.1",
+	"private": true,
+	"scripts": {
+		"deploy": "wrangler deploy",
+		"cfdev": "wrangler dev",
+		"dev": "bun run --hot adapters/bun.ts",
+		"cf-typegen": "wrangler types"
+	},
+	"dependencies": {
+		"cheerio": "^1.0.0"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "1.9.4",
+		"@types/bun": "^1.1.14",
+		"typescript": "^5.7.2",
+		"@cloudflare/workers-types": "^4.20241127.0",
+		"wrangler": "^3.60.3"
+	}
 }
