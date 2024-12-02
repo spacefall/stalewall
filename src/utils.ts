@@ -27,3 +27,12 @@ export async function getText(url: string): Promise<string> {
 export function numberBounds(num: number, min: number, max: number): number {
 	return Math.min(max, Math.max(min, num));
 }
+
+// gets string before or after separator
+String.prototype.before = function (this: string, sep: string): string {
+	return this.substring(0, this.indexOf(sep));
+};
+
+String.prototype.after = function (this: string, sep: string): string {
+	return this.substring(this.indexOf(sep) + sep.length);
+};

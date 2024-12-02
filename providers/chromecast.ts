@@ -6,7 +6,6 @@ import { getText, randInt } from "../src/utils";
 const url = "https://google.com/cast/chromecast/home/";
 
 // Grabs a list of wallpapers from the Chromecast homepage and returns one
-// noinspection JSUnusedGlobalSymbols
 export async function provide(): Promise<FinalJson> {
 	// loads the homepage and extracts the text from the only script tag in the body (which is regenerated on every request)
 	const homepage = await getText(url);
@@ -31,7 +30,7 @@ export async function provide(): Promise<FinalJson> {
 
 	return {
 		provider: "chromecast",
-		url: `${chosenOne[0].split("=")[0]}=w0`,
+		url: `${chosenOne[0].before("=")}=w0`,
 		info: {
 			credits: {
 				copyright: chosenOne[1],

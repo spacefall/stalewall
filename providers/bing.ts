@@ -1,39 +1,37 @@
 import type { Settings } from "../src/types";
-import { getJson, randInt } from "../src/utils";
 import type { FinalJson } from "../src/types";
+import { getJson, randInt } from "../src/utils";
 
 // json format of the api response
 export interface BingJson {
-	images: Image[];
-	tooltips: Tooltips;
-}
-
-export interface Image {
-	startdate: string;
-	fullstartdate: string;
-	enddate: string;
-	url: string;
-	urlbase: string;
-	copyright: string;
-	copyrightlink: string;
-	title: string;
-	desc: string;
-	desc2: string;
-	quiz: string;
-	wp: boolean;
-	hsh: string;
-	drk: number;
-	top: number;
-	bot: number;
-	hs: [];
-}
-
-export interface Tooltips {
-	loading: string;
-	previous: string;
-	next: string;
-	walle: string;
-	walls: string;
+	images: [
+		{
+			startdate: string;
+			fullstartdate: string;
+			enddate: string;
+			url: string;
+			urlbase: string;
+			copyright: string;
+			copyrightlink: string;
+			title: string;
+			desc: string;
+			desc2: string;
+			quiz: string;
+			wp: boolean;
+			hsh: string;
+			drk: number;
+			top: number;
+			bot: number;
+			hs: [];
+		},
+	];
+	tooltips: {
+		loading: string;
+		previous: string;
+		next: string;
+		walle: string;
+		walls: string;
+	};
 }
 
 // list of bing supported markets
