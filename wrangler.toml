@@ -1,5 +1,5 @@
 #:schema node_modules/wrangler/config-schema.json
-name = "stalewall-api"
+name = "stalewall"
 main = "adapters/cloudflare.ts"
 compatibility_date = "2024-11-27"
 compatibility_flags = ["nodejs_compat"]
