@@ -34,7 +34,7 @@ export async function provide(): Promise<FinalJson> {
 
     return {
         provider: "chromecast",
-        url: chosenOne[0],
+        url: `${chosenOne[0].split("=")[0]}=w0`,
         info: {
             credits: {
                 copyright: chosenOne[1],
