@@ -33,7 +33,7 @@ export async function provide(): Promise<FinalJson> {
 		url: `${chosenOne[0].before("=")}=w0`,
 		info: {
 			credits: {
-				copyright: chosenOne[1],
+				copyright: chosenOne[1] ?? "Unknown/Google",
 				urls: {
 					image: chosenOne[9],
 				},
