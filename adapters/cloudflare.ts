@@ -21,4 +21,4 @@ export default {
 			return new Response(`shit broke: ${err}`, { status: 500 });
 		}
 	},
-} satisfies ExportedHandler<Env>;
+} satisfies ExportedHandler;
