@@ -1,4 +1,4 @@
-import { devLoadProviders } from "../src/providers";
+import { devLoadProviders } from "../src/providersDev";
 import { parseQueries } from "../src/settings";
 import { randInt } from "../src/utils";
 
