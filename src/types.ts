@@ -29,3 +29,5 @@ export interface Settings {
 	proxy?: boolean;
 	crop?: boolean;
 }
+
+export type ProviderList = Array<(arg0: Settings) => Promise<FinalJson>>;

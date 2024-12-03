@@ -1,4 +1,5 @@
-import { providerArray } from "../src/providerList";
+import { getWall } from "../src/getWall";
+import { providers } from "../src/providerList";
 import { parseQueries } from "../src/settings";
 import { randInt } from "../src/utils";
 
@@ -11,17 +12,6 @@ export default {
 		if (url.pathname !== "/") {
 			return new Response("Requested api endpoint does not exist", { status: 404 });
 		}
-
-		try {
-			const set = parseQueries(url.searchParams);
-			const apiResp = await providerArray[randInt(providerArray.length)](set);
-			return new Response(JSON.stringify(apiResp), {
-				headers: { "Content-Type": "application/json" },
-			});
-		} catch (err) {
-			console.error(err);
-			// TODO: make this a bit more professional
-			return new Response(`shit broke: ${err}`, { status: 500 });
-		}
+		return await getWall(url, providers);
 	},
 } satisfies ExportedHandler;

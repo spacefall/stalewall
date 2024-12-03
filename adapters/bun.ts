@@ -1,6 +1,5 @@
+import { getWall } from "../src/getWall";
 import { devLoadProviders } from "../src/providersDev";
-import { parseQueries } from "../src/settings";
-import { randInt } from "../src/utils";
 
 const provs = devLoadProviders();
 
@@ -14,17 +13,7 @@ const server = Bun.serve({
 			return new Response("Requested api endpoint does not exist", { status: 404 });
 		}
 
-		try {
-			const set = parseQueries(url.searchParams);
-			const apiResp = await provs[randInt(provs.length)](set);
-			return new Response(JSON.stringify(apiResp), {
-				headers: { "Content-Type": "application/json" },
-			});
-		} catch (err) {
-			console.error(err);
-			// TODO: make this a bit more professional
-			return new Response(`shit broke: ${err}`, { status: 500 });
-		}
+		return await getWall(url, provs);
 	},
 });
 

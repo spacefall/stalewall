@@ -1,9 +1,9 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
-import type { FinalJson, Settings } from "./types";
+import type { FinalJson, ProviderList, Settings } from "./types";
 
 // loads providers from "providers" folder
-export function devLoadProviders() {
+export function devLoadProviders(): ProviderList {
 	const providerArray: Array<(set: Settings) => Promise<FinalJson>> = [];
 	const providerPath = path.join(__dirname, "..", "providers");
 	const files = fs.readdirSync(providerPath);
