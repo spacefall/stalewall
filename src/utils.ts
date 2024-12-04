@@ -22,7 +22,7 @@ export async function getText(url: string): Promise<string> {
 	return response.text();
 }
 
-// given num and max and min as boundries, returns num if num>min && num<max
+// given num and max and min as boundaries, returns num if num>min && num<max
 // otherwise it returns max if num>max or min if num<min
 export function numberBounds(num: number, min: number, max: number): number {
 	return Math.min(max, Math.max(min, num));
