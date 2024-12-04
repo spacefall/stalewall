@@ -23,10 +23,10 @@ export interface FinalJson {
 
 // settings json format
 export interface Settings {
-	quality?: number;
+	quality: number;
 	height?: number;
 	width?: number;
-	proxy?: boolean;
+	proxy: boolean;
 	crop?: boolean;
 }
 

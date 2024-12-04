@@ -3,17 +3,20 @@ import { numberBounds } from "./utils";
 
 // parses the queries from the webserver to a settings object
 export function parseQueries(queries: URLSearchParams): Settings {
-	const settings: Settings = {};
+	const settings: Settings = { proxy: false, quality: 92 };
 
 	// quality -> int 0-100
-	settings.quality = numberBounds(Number.parseInt(queries.get("q") ?? "92"), 0, 100);
+	const qlt = queries.get("q");
+	if (qlt) {
+		settings.quality = numberBounds(Number.parseInt(qlt), 0, 100);
+	}
 
 	if (Number.isNaN(settings.quality)) {
 		throw new Error("q is not a number");
 	}
 
 	// proxy -> boolean
-	//settings.proxy = searchQueries.has("proxy");
+	settings.proxy = queries.has("proxy");
 
 	// height -> int
 	// width -> int
@@ -34,6 +37,11 @@ export function parseQueries(queries: URLSearchParams): Settings {
 		if (Number.isNaN(settings.width) || Number.isNaN(settings.height)) {
 			throw new Error("res is not valid");
 		}
+		settings.proxy = true;
+	}
+
+	if (settings.proxy && process.env.PROXY_URL === "") {
+		throw new Error("PROXY_URL is not specified in environment variables");
 	}
 
 	//TODO: add provider list, env check
