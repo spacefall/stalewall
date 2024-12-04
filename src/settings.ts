@@ -40,7 +40,7 @@ export function parseQueries(queries: URLSearchParams): Settings {
 		settings.proxy = true;
 	}
 
-	if (settings.proxy && process.env.PROXY_URL === "") {
+	if (settings.proxy && (process.env.PROXY_URL === "" || !process.env.PROXY_URL)) {
 		throw new Error("PROXY_URL is not specified in environment variables");
 	}
 
