@@ -1,4 +1,4 @@
-import type { FinalJson } from "../src/types";
+import type { FinalJson, Settings } from "../src/types";
 import { getJson, randInt } from "../src/utils";
 
 // This array is a list of all locales supported by Windows Spotlight
@@ -70,12 +70,12 @@ interface SpotlightJsonInt {
 }
 
 // This implementation wouldn't have been possible without ORelio's api docs: https://github.com/ORelio/Spotlight-Downloader/blob/master/SpotlightAPI.md
-export async function provide(): Promise<FinalJson> {
+export async function provide(set: Settings): Promise<FinalJson> {
 	const chosenLocale = locales[randInt(locales.length)];
 	const url = `https://fd.api.iris.microsoft.com/v4/api/selection?&placement=88000820&bcnt=1&fmt=json&country=${chosenLocale.after("-")}&locale=${chosenLocale}`;
 	const extJson = (await getJson(url)) as SpotlightJsonExt;
 	const intJson = JSON.parse(extJson.batchrsp.items[0].item) as SpotlightJsonInt;
-	return {
+	const finalJson: FinalJson = {
 		provider: "spotlight",
 		url: intJson.ad.landscapeImage.asset,
 		info: {
@@ -89,4 +89,44 @@ export async function provide(): Promise<FinalJson> {
 			},
 		},
 	};
+	if (set.proxy) {
+		finalJson.url = proxy(finalJson.url, set.proxyUrl, set.width, set.height);
+	}
+	return finalJson;
+}
+
+function proxy(img: string, proxyUrl: string, width?: number, height?: number): string {
+	const finalURL = new URL(proxyUrl);
+
+	// setting provider
+	finalURL.searchParams.set("prov", "spotlight");
+
+	switch (img.charAt(8)) {
+		// when url is like https://img-prod-cms-rt-microsoft-com.akamaized.net/cms/api/am/imageFileData/RW1l7hh?ver=63b7
+		case "i":
+			finalURL.searchParams.set("type", "ip");
+			finalURL.searchParams.set("id", btoa(img.after("a/")));
+			break;
+
+		// when url is like https://query.prod.cms.rt.microsoft.com/cms/api/am/binary/RW1l25r
+		case "q":
+			finalURL.searchParams.set("type", "qp");
+			finalURL.searchParams.set("id", btoa(img.after("y/")));
+			break;
+
+		// when url is like https://res.public.onecdn.static.microsoft/creativeservice/01916e96-57ee-b813-2ace-01284739093d_desktop-b014_ds_namibnaukluftnpnamibia_adobestock_131713381_3840x2160.jpg
+		case "r":
+			finalURL.searchParams.set("type", "rp");
+			finalURL.searchParams.set("id", btoa(img.after("e/").slice(0, -4)));
+			break;
+		default:
+			throw new Error("Invalid spotlight image url");
+	}
+
+	if (height && width) {
+		finalURL.searchParams.set("h", height.toString());
+		finalURL.searchParams.set("w", width.toString());
+	}
+
+	return finalURL.toString();
 }
