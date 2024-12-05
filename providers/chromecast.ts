@@ -56,12 +56,12 @@ function proxy(img: string, proxyUrl: string, width?: number, height?: number): 
 	switch (img.charAt(37)) {
 		case "c":
 			finalURL.searchParams.set("type", "pp");
-			finalURL.searchParams.set("id", img.after("s/").before("="));
+			finalURL.searchParams.set("id", btoa(img.after("s/").before("=")));
 			break;
 
 		case "p":
 			finalURL.searchParams.set("type", "pr");
-			finalURL.searchParams.set("id", img.after("y/").before("="));
+			finalURL.searchParams.set("id", btoa(img.after("y/").before("=")));
 			break;
 
 		default:

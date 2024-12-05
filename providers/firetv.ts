@@ -44,7 +44,7 @@ function proxy(img: string, proxyUrl: string, width?: number, height?: number): 
 
 	// setting provider
 	finalURL.searchParams.set("prov", "firetv");
-	finalURL.searchParams.set("id", img.after("net/").slice(0, -4));
+	finalURL.searchParams.set("id", btoa(img.after("net/").slice(0, -4)));
 
 	if (height && width) {
 		finalURL.searchParams.set("h", height.toString());
