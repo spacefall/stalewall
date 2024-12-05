@@ -1,5 +1,5 @@
-import type { FinalJson } from "../src/types";
-import { getJson, randInt } from "../src/utils";
+import type { FinalJson, Settings } from "../src/types";
+import { randInt } from "../src/utils";
 import ftvData from "./firetv_data.json";
 
 // json format of the json file (in the gist)
@@ -15,12 +15,12 @@ export interface FTVJson {
 
 // Grabs a list of wallpapers used on the FireTV screensaver and returns one
 // noinspection JSUnusedGlobalSymbols
-export async function provide(): Promise<FinalJson> {
+export async function provide(set: Settings): Promise<FinalJson> {
 	const json = ftvData as FTVJson[];
 	const chosenOne = json[randInt(json.length)];
 
 	// json build
-	return {
+	const finalJson: FinalJson = {
 		provider: "firetv",
 		url: chosenOne.url,
 		info: {
@@ -32,4 +32,24 @@ export async function provide(): Promise<FinalJson> {
 			},
 		},
 	};
+
+	if (set.proxy) {
+		finalJson.url = proxy(finalJson.url, set.proxyUrl, set.width, set.height);
+	}
+	return finalJson;
+}
+
+function proxy(img: string, proxyUrl: string, width?: number, height?: number): string {
+	const finalURL = new URL(proxyUrl);
+
+	// setting provider
+	finalURL.searchParams.set("prov", "firetv");
+	finalURL.searchParams.set("id", img.after("net/").slice(0, -4));
+
+	if (height && width) {
+		finalURL.searchParams.set("h", height.toString());
+		finalURL.searchParams.set("w", width.toString());
+	}
+
+	return finalURL.toString();
 }
