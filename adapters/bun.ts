@@ -13,7 +13,7 @@ const server = Bun.serve({
 			return new Response("Requested api endpoint does not exist", { status: 404 });
 		}
 
-		return await getWall(url, provs);
+		return await getWall(url, provs, process.env);
 	},
 });
 

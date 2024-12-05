@@ -36,13 +36,3 @@ String.prototype.before = function (this: string, sep: string): string {
 String.prototype.after = function (this: string, sep: string): string {
 	return this.substring(this.indexOf(sep) + sep.length);
 };
-
-// gets url of proxy server
-export function getProxyUrl(): URL {
-	const pxyUrl = process.env.PROXY_URL;
-	if (!pxyUrl) {
-		// this shouldn't happen
-		throw new Error("Proxy url is not specified in environment variables, and was not checked before(?)");
-	}
-	return new URL(pxyUrl);
-}

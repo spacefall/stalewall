@@ -1,6 +1,6 @@
 import * as cheerio from "cheerio";
 import type { FinalJson, Settings } from "../src/types";
-import { getProxyUrl, getText, randInt } from "../src/utils";
+import { getText, randInt } from "../src/utils";
 
 // url of the chromecast homepage (contains a json with 50 wallpapers)
 const url = "https://google.com/cast/chromecast/home/";
@@ -42,27 +42,27 @@ export async function provide(set: Settings): Promise<FinalJson> {
 	};
 
 	if (set.proxy) {
-		finalJson.url = proxy(finalJson.url, set.width, set.height);
+		finalJson.url = proxy(finalJson.url, set.proxyUrl, set.width, set.height);
 	}
 	return finalJson;
 }
 
-function proxy(img: string, width?: number, height?: number): string {
-	const proxyURL = getProxyUrl();
+function proxy(img: string, proxyUrl: string, width?: number, height?: number): string {
 	const imgURL = new URL(img);
+	const finalURL = new URL(proxyUrl);
 
 	// setting provider
-	proxyURL.searchParams.set("prov", "chromecast");
+	finalURL.searchParams.set("prov", "chromecast");
 	// specifying if original url is /proxy/ or /chromecast-private-photos/
 	switch (imgURL.pathname.charAt(1)) {
 		case "c":
-			proxyURL.searchParams.set("type", "pp");
-			proxyURL.searchParams.set("id", imgURL.pathname.after("photos/").before("="));
+			finalURL.searchParams.set("type", "pp");
+			finalURL.searchParams.set("id", imgURL.pathname.after("photos/").before("="));
 			break;
 
 		case "p":
-			proxyURL.searchParams.set("type", "pr");
-			proxyURL.searchParams.set("id", imgURL.pathname.after("proxy/").before("="));
+			finalURL.searchParams.set("type", "pr");
+			finalURL.searchParams.set("id", imgURL.pathname.after("proxy/").before("="));
 			break;
 
 		default:
@@ -70,9 +70,9 @@ function proxy(img: string, width?: number, height?: number): string {
 	}
 
 	if (height && width) {
-		proxyURL.searchParams.set("h", height.toString());
-		proxyURL.searchParams.set("w", width.toString());
+		finalURL.searchParams.set("h", height.toString());
+		finalURL.searchParams.set("w", width.toString());
 	}
 
-	return proxyURL.toString();
+	return finalURL.toString();
 }

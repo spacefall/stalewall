@@ -23,11 +23,15 @@ export interface FinalJson {
 
 // settings json format
 export interface Settings {
+	proxy: boolean;
+	proxyUrl: string;
 	quality: number;
 	height?: number;
 	width?: number;
-	proxy: boolean;
-	crop?: boolean;
 }
 
 export type ProviderList = Array<(arg0: Settings) => Promise<FinalJson>>;
+
+export type EnvType = {
+	PROXY_URL: string;
+};

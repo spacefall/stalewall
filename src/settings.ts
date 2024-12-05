@@ -1,9 +1,9 @@
-import type { Settings } from "./types";
+import type { EnvType, Settings } from "./types";
 import { numberBounds } from "./utils";
 
 // parses the queries from the webserver to a settings object
-export function parseQueries(queries: URLSearchParams): Settings {
-	const settings: Settings = { proxy: false, quality: 92 };
+export function parseQueries(queries: URLSearchParams, env: EnvType | NodeJS.ProcessEnv): Settings {
+	const settings: Settings = { proxy: false, quality: 92, proxyUrl: "" };
 
 	// quality -> int 0-100
 	const qlt = queries.get("q");
@@ -40,11 +40,16 @@ export function parseQueries(queries: URLSearchParams): Settings {
 		settings.proxy = true;
 	}
 
-	if (settings.proxy && (process.env.PROXY_URL === "" || !process.env.PROXY_URL)) {
+	if (settings.proxy && env.PROXY_URL) {
+		if (!URL.canParse(env.PROXY_URL)) {
+			throw new Error("PROXY_URL is invalid");
+		}
+		settings.proxyUrl = env.PROXY_URL;
+	} else if (settings.proxy && !env.PROXY_URL) {
 		throw new Error("PROXY_URL is not specified in environment variables");
 	}
 
-	//TODO: add provider list, env check
+	//TODO: add provider list
 	console.info("Settings parsed:", settings);
 	return settings;
 }

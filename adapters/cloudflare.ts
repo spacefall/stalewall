@@ -1,10 +1,9 @@
 import { getWall } from "../src/getWall";
 import { providers } from "../src/providerList";
-import { parseQueries } from "../src/settings";
-import { randInt } from "../src/utils";
+import type { EnvType } from "../src/types";
 
 export default {
-	async fetch(request, env, ctx): Promise<Response> {
+	async fetch(request: Request, env: EnvType, ctx: ExecutionContext): Promise<Response> {
 		const url = new URL(request.url);
 
 		// stops all pathnames that aren't / from continuing as someone tried to get login info on the worker.dev domain
@@ -12,6 +11,6 @@ export default {
 		if (url.pathname !== "/") {
 			return new Response("Requested api endpoint does not exist", { status: 404 });
 		}
-		return await getWall(url, providers);
+		return getWall(url, providers, env);
 	},
-} satisfies ExportedHandler;
+} satisfies ExportedHandler<EnvType>;
