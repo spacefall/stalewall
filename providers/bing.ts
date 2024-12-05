@@ -45,7 +45,7 @@ export async function provide(set: Settings): Promise<FinalJson> {
 	const chosenOne = json.images[randInt(json.images.length)];
 
 	// json build
-	return {
+	const finalJson: FinalJson = {
 		provider: "bing",
 		url: `https://bing.com${chosenOne.urlbase}_UHD.jpg&p=0&pid=hp&qlt=${set.quality}`,
 		info: {
@@ -64,4 +64,24 @@ export async function provide(set: Settings): Promise<FinalJson> {
 			},
 		},
 	};
+	if (set.proxy) {
+		finalJson.url = proxy(finalJson.url, set.proxyUrl, set.width, set.height);
+	}
+	return finalJson;
+}
+
+function proxy(img: string, proxyUrl: string, width?: number, height?: number): string {
+	const finalURL = new URL(proxyUrl);
+
+	// setting provider
+	// TODO: this ignores quality, either remove quality from the api here or add it to the proxy
+	finalURL.searchParams.set("prov", "bing");
+	finalURL.searchParams.set("id", btoa(img.after("id=").before(".jpg")));
+
+	if (height && width) {
+		finalURL.searchParams.set("h", height.toString());
+		finalURL.searchParams.set("w", width.toString());
+	}
+
+	return finalURL.toString();
 }
