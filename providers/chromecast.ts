@@ -48,21 +48,20 @@ export async function provide(set: Settings): Promise<FinalJson> {
 }
 
 function proxy(img: string, proxyUrl: string, width?: number, height?: number): string {
-	const imgURL = new URL(img);
 	const finalURL = new URL(proxyUrl);
 
 	// setting provider
 	finalURL.searchParams.set("prov", "chromecast");
 	// specifying if original url is /proxy/ or /chromecast-private-photos/
-	switch (imgURL.pathname.charAt(1)) {
+	switch (img.charAt(37)) {
 		case "c":
 			finalURL.searchParams.set("type", "pp");
-			finalURL.searchParams.set("id", imgURL.pathname.after("photos/").before("="));
+			finalURL.searchParams.set("id", img.after("s/").before("="));
 			break;
 
 		case "p":
 			finalURL.searchParams.set("type", "pr");
-			finalURL.searchParams.set("id", imgURL.pathname.after("proxy/").before("="));
+			finalURL.searchParams.set("id", img.after("y/").before("="));
 			break;
 
 		default:
