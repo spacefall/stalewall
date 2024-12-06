@@ -40,14 +40,15 @@ export function parseQueries(queries: URLSearchParams, env: EnvType | NodeJS.Pro
 		settings.proxy = true;
 	}
 
-	if (settings.proxy && env.PROXY_URL) {
-		if (!URL.canParse(env.PROXY_URL)) {
-			throw new Error("PROXY_URL is invalid");
-		}
-		settings.proxyUrl = env.PROXY_URL;
-	} else if (settings.proxy && !env.PROXY_URL) {
+	if (!env.PROXY_URL) {
 		throw new Error("PROXY_URL is not specified in environment variables");
 	}
+
+	if (!URL.canParse(env.PROXY_URL)) {
+		throw new Error("PROXY_URL is invalid");
+	}
+
+	settings.proxyUrl = env.PROXY_URL;
 
 	//TODO: add provider list
 	console.info("Settings parsed:", settings);
