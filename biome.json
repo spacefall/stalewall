@@ -13,7 +13,6 @@
 		"enabled": true,
 		"useEditorconfig": true,
 		"formatWithErrors": false,
-		"lineWidth": 140,
 		"indentWidth": 4
 	},
 	"organizeImports": {
