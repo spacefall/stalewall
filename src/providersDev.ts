@@ -1,10 +1,10 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
-import type { FinalJson, ProviderList, Settings } from "./types";
+import type { Provider, ProviderMap } from "./types";
 
 // loads providers from "providers" folder
-export function devLoadProviders(): ProviderList {
-	const providerArray: Array<(set: Settings) => Promise<FinalJson>> = [];
+export function devLoadProviders(): ProviderMap {
+	const providers: ProviderMap = new Map<string, Provider>();
 	const providerPath = path.join(__dirname, "..", "providers");
 	const files = fs.readdirSync(providerPath);
 
@@ -15,10 +15,10 @@ export function devLoadProviders(): ProviderList {
 			import(path.join(providerPath, file))
 				.then((module) => {
 					if (typeof module.provide === "function") {
-						providerArray.push(module.provide);
-						console.log(`Loaded module ${file}`);
+						providers.set(file.before("."), module.provide);
+						console.log(`Loaded module ${file.before(".")}`);
 					} else {
-						console.warn(`Module ${file} does not contain function 'provide'`);
+						console.warn(`Module ${file.before(".")} does not contain function 'provide'`);
 					}
 				})
 				.catch((err) => {
@@ -26,5 +26,5 @@ export function devLoadProviders(): ProviderList {
 				});
 		}
 	}
-	return providerArray;
+	return providers;
 }

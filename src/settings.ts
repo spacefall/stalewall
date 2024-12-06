@@ -1,9 +1,10 @@
-import type { EnvType, Settings } from "./types";
+import type { EnvType, ProviderList, ProviderMap, Settings } from "./types";
 import { numberBounds } from "./utils";
 
 // parses the queries from the webserver to a settings object
-export function parseQueries(queries: URLSearchParams, env: EnvType | NodeJS.ProcessEnv): Settings {
-	const settings: Settings = { proxy: false, quality: 92, proxyUrl: "" };
+export function parseQueries(queries: URLSearchParams, env: EnvType | NodeJS.ProcessEnv, provs: ProviderMap): Settings {
+	const settings: Settings = { proxy: false, quality: 92, proxyUrl: "", providers: provs.values().toArray() };
+	let providerNames = provs.keys().toArray();
 
 	// quality -> int 0-100
 	const qlt = queries.get("q");
@@ -40,6 +41,26 @@ export function parseQueries(queries: URLSearchParams, env: EnvType | NodeJS.Pro
 		settings.proxy = true;
 	}
 
+	// list of providers
+	if (queries.has("prov")) {
+		const provQuery = queries.get("prov");
+		const newProvs: ProviderList = [];
+		providerNames = [];
+		if (provQuery) {
+			const chosenProviders = provQuery.split(",");
+			for (const prov of chosenProviders) {
+				const providerToPush = provs.get(prov);
+				if (!providerToPush) {
+					throw new Error(`prov: ${prov} is not a valid provider`);
+				}
+				newProvs.push(providerToPush);
+				providerNames.push(prov);
+			}
+		}
+		settings.providers = newProvs;
+	}
+
+	// proxy url check
 	if (!env.PROXY_URL) {
 		throw new Error("PROXY_URL is not specified in environment variables");
 	}
@@ -52,5 +73,6 @@ export function parseQueries(queries: URLSearchParams, env: EnvType | NodeJS.Pro
 
 	//TODO: add provider list
 	console.info("Settings parsed:", settings);
+	console.info("Providers:", providerNames);
 	return settings;
 }
