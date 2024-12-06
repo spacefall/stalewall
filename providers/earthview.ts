@@ -14,7 +14,6 @@ export interface EarthviewJson {
 export async function provide(set: Settings): Promise<FinalJson> {
 	const chosenOne = earthviewData[randInt(earthviewData.length)];
 
-	// TODO: handle when PROXY_URL is non existant
 	let imageUrl = `${set.proxyUrl}?prov=earthview&id=${btoa(chosenOne.id)}`;
 	if (set.width && set.height) {
 		imageUrl += `&w=${set.width}&h=${set.height}`;

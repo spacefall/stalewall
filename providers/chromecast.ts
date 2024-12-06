@@ -15,7 +15,7 @@ export async function provide(set: Settings): Promise<FinalJson> {
 		throw new Error("chromecast: script tag not found");
 	}
 
-	const usefulString = scriptTagText.substring(scriptTagText.indexOf("JSON.parse('") + 12, scriptTagText.indexOf("'))."));
+	const usefulString = scriptTagText.after("JSON.parse('").before("')).");
 
 	// I don't know if it's just a bun thing but ì decodeURIComponent will unescape \x sequences only in a repl
 	// Here it doesn't work for some reason so \x gets replaced with % which does work
