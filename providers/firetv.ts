@@ -5,8 +5,6 @@ import ftvData from "./firetv_data.json";
 // json format of the json file (in the gist)
 export interface FTVJson {
 	url: string;
-	width: number;
-	height: number;
 	description: string;
 }
 
