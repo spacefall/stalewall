@@ -71,15 +71,12 @@ export async function provide(set: Settings): Promise<FinalJson> {
 			desc: {
 				title: chosenOne.title,
 				// short description is the location before the copyright info
-				short: chosenOne.copyright.substring(0, chosenOne.copyright.indexOf("(")),
+				short: chosenOne.copyright.before("(").slice(0, -1),
 				long: desc,
 			},
 			credits: {
 				// the copyright info has the location removed
-				copyright: chosenOne.copyright.substring(
-					chosenOne.copyright.indexOf("(") + 3,
-					chosenOne.copyright.indexOf(")"),
-				),
+				copyright: chosenOne.copyright.after("(").slice(0, -1),
 				urls: {
 					copyright: chosenOne.copyrightlink,
 				},
