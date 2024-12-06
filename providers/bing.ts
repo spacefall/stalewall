@@ -35,7 +35,21 @@ export interface BingJson {
 }
 
 // list of bing supported markets
-const markets = ["af-NA", "as-IN", "eu-ES", "zh-CN", "en-CA", "en-GB", "en-US", "fr-CA", "fr-FR", "de-DE", "it-IT", "ja-JP", "pt-BR"];
+const markets = [
+	"af-NA",
+	"as-IN",
+	"eu-ES",
+	"zh-CN",
+	"en-CA",
+	"en-GB",
+	"en-US",
+	"fr-CA",
+	"fr-FR",
+	"de-DE",
+	"it-IT",
+	"ja-JP",
+	"pt-BR",
+];
 
 // Grabs a wallpaper from the Bing homepage api and returns it
 // noinspection JSUnusedGlobalSymbols
@@ -43,6 +57,11 @@ export async function provide(set: Settings): Promise<FinalJson> {
 	const url = `https://www.bing.com/HPImageArchive.aspx?format=js&n=8&desc=1&idx=${randInt(8)}&mkt=${markets[randInt(markets.length)]}`;
 	const json = (await getJson(url)) as BingJson;
 	const chosenOne = json.images[randInt(json.images.length)];
+
+	let desc = chosenOne.desc;
+	if (chosenOne.desc2) {
+		desc += `\n${chosenOne.desc2}`;
+	}
 
 	// json build
 	const finalJson: FinalJson = {
@@ -53,11 +72,14 @@ export async function provide(set: Settings): Promise<FinalJson> {
 				title: chosenOne.title,
 				// short description is the location before the copyright info
 				short: chosenOne.copyright.substring(0, chosenOne.copyright.indexOf("(")),
-				long: `${chosenOne.desc}\n\n${chosenOne.desc2}`,
+				long: desc,
 			},
 			credits: {
 				// the copyright info has the location removed
-				copyright: chosenOne.copyright.substring(chosenOne.copyright.indexOf("(") + 3, chosenOne.copyright.indexOf(")")),
+				copyright: chosenOne.copyright.substring(
+					chosenOne.copyright.indexOf("(") + 3,
+					chosenOne.copyright.indexOf(")"),
+				),
 				urls: {
 					copyright: chosenOne.copyrightlink,
 				},
