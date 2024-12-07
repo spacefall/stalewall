@@ -1,5 +1,5 @@
 import type { FinalJson, Settings } from "../src/types";
-import { getJson, randInt } from "../src/utils";
+import { getData, randInt } from "../src/utils";
 
 // This array is a list of all locales supported by Windows Spotlight
 // biome-ignore format: this array expanded is about 338 lines, it's better to keep it in a single line (sorry)
@@ -73,7 +73,7 @@ interface SpotlightJsonInt {
 export async function provide(set: Settings): Promise<FinalJson> {
 	const chosenLocale = locales[randInt(locales.length)];
 	const url = `https://fd.api.iris.microsoft.com/v4/api/selection?&placement=88000820&bcnt=1&fmt=json&country=${chosenLocale.after("-")}&locale=${chosenLocale}`;
-	const extJson = (await getJson(url)) as SpotlightJsonExt;
+	const extJson = (await getData(url)) as SpotlightJsonExt;
 	const intJson = JSON.parse(extJson.batchrsp.items[0].item) as SpotlightJsonInt;
 	const finalJson: FinalJson = {
 		provider: "spotlight",

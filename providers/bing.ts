@@ -1,6 +1,6 @@
 import type { Settings } from "../src/types";
 import type { FinalJson } from "../src/types";
-import { getJson, randInt } from "../src/utils";
+import { getData, randInt } from "../src/utils";
 
 // json format of the api response
 export interface BingJson {
@@ -55,7 +55,7 @@ const markets = [
 // noinspection JSUnusedGlobalSymbols
 export async function provide(set: Settings): Promise<FinalJson> {
 	const url = `https://www.bing.com/HPImageArchive.aspx?format=js&n=8&desc=1&idx=${randInt(8)}&mkt=${markets[randInt(markets.length)]}`;
-	const json = (await getJson(url)) as BingJson;
+	const json = (await getData(url)) as BingJson;
 	const chosenOne = json.images[randInt(json.images.length)];
 
 	let desc = chosenOne.desc;

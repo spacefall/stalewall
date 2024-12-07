@@ -1,6 +1,6 @@
 import * as cheerio from "cheerio";
 import type { FinalJson, Settings } from "../src/types";
-import { getText, randInt } from "../src/utils";
+import { getData, randInt } from "../src/utils";
 
 // url of the chromecast homepage (contains a json with 50 wallpapers)
 const url = "https://google.com/cast/chromecast/home/";
@@ -8,7 +8,7 @@ const url = "https://google.com/cast/chromecast/home/";
 // Grabs a list of wallpapers from the Chromecast homepage and returns one
 export async function provide(set: Settings): Promise<FinalJson> {
 	// loads the homepage and extracts the text from the only script tag in the body (which is regenerated on every request)
-	const homepage = await getText(url);
+	const homepage = (await getData(url)) as string;
 	const $ = cheerio.load(homepage);
 	const scriptTagText = $("body > script").text();
 	if (!scriptTagText) {

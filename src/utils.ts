@@ -4,22 +4,15 @@ export function randInt(n: number) {
 }
 
 // returns a json from url
-export async function getJson(url: string): Promise<object> {
-	const response = await fetch(url);
-	if (!response.ok) {
-		throw new Error(`Response status: ${response.status}`);
+export async function getData(url: string): Promise<object | string> {
+	const res = await fetch(url);
+	if (!res.ok) {
+		throw new Error(`Response status: ${res.status} ${res.statusText}`);
 	}
-
-	return (await response.json()) as object;
-}
-
-export async function getText(url: string): Promise<string> {
-	const response = await fetch(url);
-	if (!response.ok) {
-		throw new Error(`Response status: ${response.status}`);
+	if (res.headers.get("content-type")?.includes("json") ?? false) {
+		return res.json();
 	}
-
-	return response.text();
+	return res.text();
 }
 
 // given num and max and min as boundaries, returns num if num>min && num<max
