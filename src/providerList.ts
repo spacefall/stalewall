@@ -15,3 +15,6 @@ export const providers: ProviderMap = new Map<string, Provider>([
 	["firetv", ftv.provide],
 	["spotlight", spot.provide],
 ]);
+
+export const defaultProviders: Array<string> = ["bing", "chromecast", "earthview", "firetv", "spotlight"];
+export const providersWithApiKeys: Array<string> = ["apod", "unsplash"];

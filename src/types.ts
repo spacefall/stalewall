@@ -27,6 +27,7 @@ export interface Settings {
 	providers: ProviderList;
 	height?: number;
 	width?: number;
+	keys?: Map<string, string>;
 }
 
 export type Provider = (arg0: Settings) => Promise<FinalJson>;

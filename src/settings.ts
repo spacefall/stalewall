@@ -1,10 +1,14 @@
-import type { EnvType, ProviderList, ProviderMap, Settings } from "./types";
+import { defaultProviders, providersWithApiKeys } from "./providerList";
+import type { EnvType, ProviderMap, Settings } from "./types";
 import { numberBounds } from "./utils";
 
 // parses the queries from the webserver to a settings object
-export function parseQueries(queries: URLSearchParams, env: EnvType | NodeJS.ProcessEnv, provs: ProviderMap): Settings {
-	const settings: Settings = { proxy: false, quality: 92, proxyUrl: "", providers: provs.values().toArray() };
-	let providerNames = provs.keys().toArray();
+export function parseQueries(
+	queries: URLSearchParams,
+	env: { [type: string]: string | undefined },
+	provs: ProviderMap,
+): Settings {
+	const settings: Settings = { proxy: false, quality: 92, proxyUrl: "", providers: [] };
 
 	// quality -> int 0-100
 	const qlt = queries.get("q");
@@ -42,22 +46,26 @@ export function parseQueries(queries: URLSearchParams, env: EnvType | NodeJS.Pro
 	}
 
 	// list of providers
-	if (queries.has("prov")) {
-		const provQuery = queries.get("prov");
-		const newProvs: ProviderList = [];
-		providerNames = [];
-		if (provQuery) {
-			const chosenProviders = provQuery.split(",");
-			for (const prov of chosenProviders) {
-				const providerToPush = provs.get(prov);
-				if (!providerToPush) {
-					throw new Error(`prov: ${prov} is not a valid provider`);
-				}
-				newProvs.push(providerToPush);
-				providerNames.push(prov);
-			}
+	const chosenProviders = queries.get("prov")?.split(",") ?? defaultProviders;
+	const providerNames: string[] = [];
+	const apiKeys: Map<string, string> = new Map();
+	for (const prov of chosenProviders) {
+		const providerToPush = provs.get(prov);
+		if (!providerToPush) {
+			throw new Error(`prov: ${prov} is not a valid provider`);
 		}
-		settings.providers = newProvs;
+		if (providersWithApiKeys.includes(prov)) {
+			const key = env[`${prov.toUpperCase()}_API_KEY`];
+			if (!key) {
+				throw new Error(`prov: ${prov} requires an API key, but no API key was set`);
+			}
+			apiKeys.set(prov, key);
+		}
+		settings.providers.push(providerToPush);
+		providerNames.push(prov);
+	}
+	if (apiKeys.size > 0) {
+		settings.keys = apiKeys;
 	}
 
 	// proxy url check
