@@ -1,11 +1,11 @@
-import { parseQueries } from "./settings";
-import type { EnvType, ProviderMap } from "./types";
+import { getSettings } from "./settings";
+import type { EnvVars, ProviderMap } from "./types";
 import { randInt } from "./utils";
 
-export async function getWall(url: URL, provs: ProviderMap, env: EnvType | NodeJS.ProcessEnv): Promise<Response> {
+export async function getWall(url: URL, provs: ProviderMap, env: EnvVars | NodeJS.ProcessEnv): Promise<Response> {
 	try {
-		const set = parseQueries(url.searchParams, env, provs);
-		const apiResp = await set.providers[randInt(set.providers.length)](set);
+		const settings = getSettings(url.searchParams, env, provs);
+		const apiResp = await settings.providers[randInt(settings.providers.length)](settings);
 		return new Response(JSON.stringify(apiResp), {
 			headers: { "Content-Type": "application/json" },
 		});

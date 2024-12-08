@@ -1,9 +1,9 @@
-// int from 0 to n-1
-export function randInt(n: number) {
-	return Math.floor(Math.random() * Math.floor(n));
+// Returns a random int between 0 and nax-1
+export function randInt(max: number) {
+	return ~~(Math.random() * ~~max);
 }
 
-// returns a json from url
+// Fetches a specified url, and returns an object (json) if the page returns a json otherwise it returns the text
 export async function getData(url: string): Promise<object | string> {
 	const res = await fetch(url);
 	if (!res.ok) {
@@ -15,17 +15,14 @@ export async function getData(url: string): Promise<object | string> {
 	return res.text();
 }
 
-// given num and max and min as boundaries, returns num if num>min && num<max
-// otherwise it returns max if num>max or min if num<min
-export function numberBounds(num: number, min: number, max: number): number {
-	return Math.min(max, Math.max(min, num));
-}
-
-// gets string before or after separator
-String.prototype.before = function (this: string, sep: string): string {
-	return this.substring(0, this.indexOf(sep));
+// Gets string before separator
+String.prototype.before = function (this: string, separator: string): string {
+	const index = this.indexOf(separator);
+	return index !== -1 ? this.substring(0, index) : this;
 };
 
-String.prototype.after = function (this: string, sep: string): string {
-	return this.substring(this.indexOf(sep) + sep.length);
+// Gets string after separator
+String.prototype.after = function (this: string, separator: string): string {
+	const index = this.indexOf(separator);
+	return index !== -1 ? this.substring(index + separator.length) : this;
 };
