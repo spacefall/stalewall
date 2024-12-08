@@ -1,4 +1,3 @@
-import * as cheerio from "cheerio";
 import type { FinalJson, Settings } from "../src/types";
 import { getData, randInt } from "../src/utils";
 
@@ -9,13 +8,11 @@ const url = "https://google.com/cast/chromecast/home/";
 export async function provide(set: Settings): Promise<FinalJson> {
 	// loads the homepage and extracts the text from the only script tag in the body (which is regenerated on every request)
 	const homepage = (await getData(url)) as string;
-	const $ = cheerio.load(homepage);
-	const scriptTagText = $("body > script").text();
-	if (!scriptTagText) {
+
+	if (!homepage) {
 		throw new Error("chromecast: script tag not found");
 	}
-
-	const usefulString = scriptTagText.after("JSON.parse('").before("')).");
+	const usefulString = homepage.after("JSON.parse('").before("')).");
 
 	// I don't know if it's just a bun thing but ì decodeURIComponent will unescape \x sequences only in a repl
 	// Here it doesn't work for some reason so \x gets replaced with % which does work

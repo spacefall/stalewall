@@ -8,9 +8,7 @@
 		"dev": "bun run --hot adapters/bun.ts",
 		"cf-typegen": "wrangler types"
 	},
-	"dependencies": {
-		"cheerio": "^1.0.0"
-	},
+	"dependencies": {},
 	"devDependencies": {
 		"@biomejs/biome": "1.9.4",
 		"@types/bun": "^1.1.14",
