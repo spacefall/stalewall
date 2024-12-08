@@ -1,28 +1,22 @@
-import type { FinalJson, Settings } from "../src/types";
-import { randInt } from "../src/utils";
+import type { Settings, StalewallResponse } from "../src/types";
+import { getCommonProxyQueries, randInt } from "../src/utils";
 import earthviewData from "./earthview_data.json";
 
-// json format of the json file (in the gist)
-export interface EarthviewJson {
-	id: string;
-	location: string;
-	attribution: string;
-}
-
-// Grabs a list of wallpapers used on the FireTV screensaver and returns one
-// noinspection JSUnusedGlobalSymbols
-export async function provide(set: Settings): Promise<FinalJson> {
+export async function provide(set: Settings): Promise<StalewallResponse> {
+	// Random wallpaper from json
 	const chosenOne = earthviewData[randInt(earthviewData.length)];
 
-	let imageUrl = `${set.proxyUrl}?prov=earthview&id=${btoa(chosenOne.id)}`;
-	if (set.width && set.height) {
-		imageUrl += `&w=${set.width}&h=${set.height}`;
-	}
+	// Proxy here is forced as the api returns a JSON with the image encoded in base64 :/
+	// I don't really like the idea of embedding a 4mb image into a JSON, so we return a link to the proxy that
+	// downloads the image and sends it back
+	const proxyUrl = new URL(set.proxyUrl);
+	proxyUrl.search = getCommonProxyQueries(set, "earthview");
+	proxyUrl.searchParams.set("id", btoa(chosenOne.id));
 
-	// json build
+	// JSON
 	return {
 		provider: "earthview",
-		url: imageUrl,
+		url: proxyUrl.toString(),
 		info: {
 			desc: {
 				short: chosenOne.location,

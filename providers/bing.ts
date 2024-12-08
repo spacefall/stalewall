@@ -1,8 +1,8 @@
 import type { Settings } from "../src/types";
-import type { FinalJson } from "../src/types";
-import { getData, randInt } from "../src/utils";
+import type { StalewallResponse } from "../src/types";
+import { getCommonProxyQueries, getData, randInt } from "../src/utils";
 
-// json format of the api response
+// Bing JSON response (used for type checking and code completion)
 export interface BingJson {
 	images: [
 		{
@@ -34,73 +34,57 @@ export interface BingJson {
 	};
 }
 
-// list of bing supported markets
-const markets = [
-	"af-NA",
-	"as-IN",
-	"eu-ES",
-	"zh-CN",
-	"en-CA",
-	"en-GB",
-	"en-US",
-	"fr-CA",
-	"fr-FR",
-	"de-DE",
-	"it-IT",
-	"ja-JP",
-	"pt-BR",
-];
+// Array of markets that have different images in Bing's daily wallpaper
+// biome-ignore format: it takes too many lines (less than spotlight but still)
+const markets = ["af-NA", "as-IN", "eu-ES", "zh-CN", "en-CA", "en-GB", "en-US", "fr-CA", "fr-FR", "de-DE", "it-IT", "ja-JP", "pt-BR"];
 
-// Grabs a wallpaper from the Bing homepage api and returns it
-// noinspection JSUnusedGlobalSymbols
-export async function provide(set: Settings): Promise<FinalJson> {
+export async function provide(set: Settings): Promise<StalewallResponse> {
 	const url = `https://www.bing.com/HPImageArchive.aspx?format=js&n=8&desc=1&idx=${randInt(8)}&mkt=${markets[randInt(markets.length)]}`;
-	const json = (await getData(url)) as BingJson;
-	const chosenOne = json.images[randInt(json.images.length)];
+	try {
+		const json = (await getData(url)) as BingJson;
+		const chosenOne = json.images[randInt(json.images.length)];
 
-	let desc = chosenOne.desc;
-	if (chosenOne.desc2) {
-		desc += `\n${chosenOne.desc2}`;
-	}
+		const imageUrl = `https://bing.com${chosenOne.urlbase}_UHD.jpg&p=0&pid=hp&qlt=${set.quality}`;
+		const proxyUrl = set.proxy ? proxy(imageUrl, set) : imageUrl;
 
-	// json build
-	const finalJson: FinalJson = {
-		provider: "bing",
-		url: `https://bing.com${chosenOne.urlbase}_UHD.jpg&p=0&pid=hp&qlt=${set.quality}`,
-		info: {
-			desc: {
-				title: chosenOne.title,
-				// short description is the location before the copyright info
-				short: chosenOne.copyright.before("(").slice(0, -1),
-				long: desc,
-			},
-			credits: {
-				// the copyright info has the location removed
-				copyright: chosenOne.copyright.after("(").slice(0, -1),
-				urls: {
-					copyright: chosenOne.copyrightlink,
+		let desc = chosenOne.desc;
+		if (chosenOne.desc2) {
+			desc += `\n${chosenOne.desc2}`;
+		}
+
+		// JSON
+		return {
+			provider: "bing",
+			url: proxyUrl,
+			info: {
+				desc: {
+					title: chosenOne.title,
+					// short description is the location before the copyright info
+					short: chosenOne.copyright.before("(").slice(0, -1),
+					long: desc,
+				},
+				credits: {
+					// the copyright info has the location removed
+					copyright: chosenOne.copyright.after("(").slice(0, -1),
+					urls: {
+						copyright: chosenOne.copyrightlink,
+					},
 				},
 			},
-		},
-	};
-	if (set.proxy) {
-		finalJson.url = proxy(finalJson.url, set.proxyUrl, set.width, set.height);
+		};
+	} catch (e) {
+		// @ts-ignore
+		throw new Error(`bing: ${e.message}`);
 	}
-	return finalJson;
 }
 
-function proxy(img: string, proxyUrl: string, width?: number, height?: number): string {
-	const finalURL = new URL(proxyUrl);
+function proxy(image: string, settings: Settings): string {
+	// Create url and set standard things (like height, width etc.)
+	const proxiedImage = new URL(settings.proxyUrl);
+	proxiedImage.search = getCommonProxyQueries(settings, "bing");
 
-	// setting provider
-	// TODO: this ignores quality, either remove quality from the api here or add it to the proxy
-	finalURL.searchParams.set("prov", "bing");
-	finalURL.searchParams.set("id", btoa(img.after("id=").before(".jpg")));
+	// Setting ID
+	proxiedImage.searchParams.set("id", btoa(image.between("id=", ".jpg")));
 
-	if (height && width) {
-		finalURL.searchParams.set("h", height.toString());
-		finalURL.searchParams.set("w", width.toString());
-	}
-
-	return finalURL.toString();
+	return proxiedImage.toString();
 }

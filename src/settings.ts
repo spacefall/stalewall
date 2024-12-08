@@ -45,10 +45,10 @@ function parseQuality(qualityStr: string | null): number {
 	if (qualityStr) {
 		const quality = Number.parseInt(qualityStr);
 		if (Number.isNaN(quality)) {
-			throw new Error("quality is not a number");
+			throw new Error("quality: not a valid number");
 		}
 		if (quality < 0 || quality > 100) {
-			throw new Error("quality is not in range 0-100");
+			throw new Error("quality: not in range 0-100");
 		}
 		return quality;
 	}
@@ -64,7 +64,7 @@ function parseRes(resStr: string | null): { width: number; height: number } | un
 	const width = Number.parseInt(res[0]);
 	const height = Number.parseInt(res[1]);
 	if (Number.isNaN(width) || Number.isNaN(height)) {
-		throw new Error("res is not valid");
+		throw new Error("res: not a valid number");
 	}
 	return { width, height };
 }
@@ -92,10 +92,10 @@ function parseProviders(
 
 function validateProxyURL(proxyUrl: string | undefined): string {
 	if (!proxyUrl) {
-		throw new Error("PROXY_URL is not specified in environment variables");
+		throw new Error("PROXY_URL: not specified in environment variables");
 	}
 	if (!URL.canParse(proxyUrl)) {
-		throw new Error("PROXY_URL is invalid");
+		throw new Error("PROXY_URL: invalid url");
 	}
 	return proxyUrl;
 }

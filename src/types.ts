@@ -1,5 +1,5 @@
 // Provider type is based on the provide functions
-export type Provider = (arg0: Settings) => Promise<FinalJson>;
+export type Provider = (arg0: Settings) => Promise<StalewallResponse>;
 // ProviderMap is a map with name of provider and the related provide function
 export type ProviderMap = Map<string, Provider>;
 // ProviderList is just an array of provide functions
@@ -23,7 +23,7 @@ export type EnvVars = {
 };
 
 // JSON that gets returned by the api
-export interface FinalJson {
+export interface StalewallResponse {
 	provider: string;
 	url: string;
 	info: {

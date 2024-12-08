@@ -1,26 +1,18 @@
-import type { FinalJson, Settings } from "../src/types";
-import { randInt } from "../src/utils";
+import type { Settings, StalewallResponse } from "../src/types";
+import { getCommonProxyQueries, randInt } from "../src/utils";
 import ftvData from "./firetv_data.json";
 
-// json format of the json file (in the gist)
-export interface FTVJson {
-	url: string;
-	description: string;
-}
+export async function provide(set: Settings): Promise<StalewallResponse> {
+	// Load json and choose a random wallpaper
+	const chosenOne = ftvData[randInt(ftvData.length)];
 
-// url of the json containing the firetv wallpapers
-//const url = "https://gist.githubusercontent.com/spacefall/0cc095656f67e826977c84eecdd89b3c/raw/07553644e25c653fc099aa3e1058456b82c73d6f/firetv.json";
+	// Proxy if necessary
+	const imageUrl = set.proxy ? proxy(chosenOne.url, set) : chosenOne.url;
 
-// Grabs a list of wallpapers used on the FireTV screensaver and returns one
-// noinspection JSUnusedGlobalSymbols
-export async function provide(set: Settings): Promise<FinalJson> {
-	const json = ftvData as FTVJson[];
-	const chosenOne = json[randInt(json.length)];
-
-	// json build
-	const finalJson: FinalJson = {
+	// JSON
+	return {
 		provider: "firetv",
-		url: chosenOne.url,
+		url: imageUrl,
 		info: {
 			desc: {
 				short: chosenOne.description,
@@ -30,24 +22,15 @@ export async function provide(set: Settings): Promise<FinalJson> {
 			},
 		},
 	};
-
-	if (set.proxy) {
-		finalJson.url = proxy(finalJson.url, set.proxyUrl, set.width, set.height);
-	}
-	return finalJson;
 }
 
-function proxy(img: string, proxyUrl: string, width?: number, height?: number): string {
-	const finalURL = new URL(proxyUrl);
+function proxy(image: string, settings: Settings): string {
+	// Create url and set standard things (like height, width etc.)
+	const proxiedImage = new URL(settings.proxyUrl);
+	proxiedImage.search = getCommonProxyQueries(settings, "firetv");
 
-	// setting provider
-	finalURL.searchParams.set("prov", "firetv");
-	finalURL.searchParams.set("id", btoa(img.after("net/").slice(0, -4)));
+	// Setting ID
+	proxiedImage.searchParams.set("id", btoa(image.after("net/").slice(0, -4)));
 
-	if (height && width) {
-		finalURL.searchParams.set("h", height.toString());
-		finalURL.searchParams.set("w", width.toString());
-	}
-
-	return finalURL.toString();
+	return proxiedImage.toString();
 }

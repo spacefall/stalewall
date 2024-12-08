@@ -1,8 +1,8 @@
 import type { Settings } from "../src/types";
-import type { FinalJson } from "../src/types";
-import { getData } from "../src/utils";
+import type { StalewallResponse } from "../src/types";
+import { getCommonProxyQueries, getData } from "../src/utils";
 
-// json format of the api response
+// APOD api JSON response (used for type checking and code completion)
 export interface ApodJson {
 	copyright?: string;
 	date: string;
@@ -15,50 +15,51 @@ export interface ApodJson {
 	thumbnail_url?: string;
 }
 
-// Grabs a wallpaper from the Apod api and returns it
-// noinspection JSUnusedGlobalSymbols
-export async function provide(set: Settings): Promise<FinalJson> {
+export async function provide(set: Settings): Promise<StalewallResponse> {
 	const url = `https://api.nasa.gov/planetary/apod?count=1&thumbs=true&api_key=${set.keys?.get("apod")}`;
-	const json = ((await getData(url)) as ApodJson[])[0];
+	try {
+		const json = ((await getData(url)) as ApodJson[])[0];
 
-	// could use the thumbnail of the video, but it's usually low quality and kinda bad, also there aren't a lot of videos
-	if (json.media_type !== "image") {
-		throw new Error("apod: media_type is not image");
-	}
+		// TODO: resolve this?
+		// Error out if video is returned instead of image, the thumbnail could be used, but it's usually low-res and not well-made
+		// This could also be replaced with a while media_type != "image" { getData(url) } but the api has a limit and I don't want (accidentally) to spam it
+		// Also not many videos show up so it may not even show up that frequently
+		// This could also be resolved by upping the count and choosing a random one until media_type == "image"
+		if (json.media_type !== "image") {
+			throw new Error("media_type is not image");
+		}
 
-	const imageUrl = json.hdurl ?? json.url;
+		// Proxy if necessary
+		const imageUrl = json.hdurl ?? json.url;
+		const proxyUrl = set.proxy ? proxy(imageUrl, set) : imageUrl;
 
-	// json build
-	const finalJson: FinalJson = {
-		provider: "apod",
-		url: imageUrl,
-		info: {
-			desc: {
-				title: json.title,
-				long: json.explanation,
+		// JSON
+		return {
+			provider: "apod",
+			url: proxyUrl,
+			info: {
+				desc: {
+					title: json.title,
+					long: json.explanation,
+				},
+				credits: {
+					copyright: json.copyright ?? "Public domain, NASA",
+				},
 			},
-			credits: {
-				copyright: json.copyright ?? "Public domain, NASA",
-			},
-		},
-	};
-	if (set.proxy) {
-		finalJson.url = proxy(imageUrl, set.proxyUrl, set.width, set.height);
+		};
+	} catch (e) {
+		// @ts-ignore
+		throw new Error(`apod: ${e.message}`);
 	}
-	return finalJson;
 }
 
-function proxy(img: string, proxyUrl: string, width?: number, height?: number): string {
-	const finalURL = new URL(proxyUrl);
+function proxy(image: string, settings: Settings): string {
+	// Create url and set standard things (like height, width etc.)
+	const proxiedImage = new URL(settings.proxyUrl);
+	proxiedImage.search = getCommonProxyQueries(settings, "apod");
 
-	// setting provider
-	finalURL.searchParams.set("prov", "apod");
-	finalURL.searchParams.set("id", btoa(img.after("e/").before(".jpg")));
+	// Setting ID
+	proxiedImage.searchParams.set("id", btoa(image.between("e/", ".jpg")));
 
-	if (height && width) {
-		finalURL.searchParams.set("h", height.toString());
-		finalURL.searchParams.set("w", width.toString());
-	}
-
-	return finalURL.toString();
+	return proxiedImage.toString();
 }
