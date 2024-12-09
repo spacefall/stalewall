@@ -35,7 +35,7 @@ export interface StalewallResponse {
 		credits: {
 			copyright: string;
 			urls?: {
-				copyright?: string;
+				author?: string;
 				image?: string;
 			};
 		};

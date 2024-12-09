@@ -67,7 +67,7 @@ export async function provide(set: Settings): Promise<StalewallResponse> {
 					// the copyright info has the location removed
 					copyright: chosenOne.copyright.after("(").slice(0, -1),
 					urls: {
-						copyright: chosenOne.copyrightlink,
+						image: chosenOne.copyrightlink,
 					},
 				},
 			},
