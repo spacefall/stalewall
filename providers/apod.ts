@@ -2,6 +2,8 @@ import type { Settings } from "../src/types";
 import type { StalewallResponse } from "../src/types";
 import { getCommonProxyQueries, getData } from "../src/utils";
 
+const providerName = "apod";
+
 // APOD api JSON response (used for type checking and code completion)
 export interface ApodJson {
 	copyright?: string;
@@ -16,7 +18,7 @@ export interface ApodJson {
 }
 
 export async function provide(set: Settings): Promise<StalewallResponse> {
-	const url = `https://api.nasa.gov/planetary/apod?count=1&thumbs=true&api_key=${set.keys?.get("apod")}`;
+	const url = `https://api.nasa.gov/planetary/apod?count=1&thumbs=true&api_key=${set.keys?.get(providerName)}`;
 	try {
 		const json = ((await getData(url)) as ApodJson[])[0];
 
@@ -35,7 +37,7 @@ export async function provide(set: Settings): Promise<StalewallResponse> {
 
 		// JSON
 		return {
-			provider: "apod",
+			provider: providerName,
 			url: proxyUrl,
 			info: {
 				desc: {
@@ -48,15 +50,16 @@ export async function provide(set: Settings): Promise<StalewallResponse> {
 			},
 		};
 	} catch (e) {
-		// @ts-ignore
-		throw new Error(`apod: ${e.message}`);
+		if (e instanceof Error) throw new Error(`${providerName}: ${e.message}`);
+		// ? means that IDK what happened as the error is not an Error, but it has been thrown anyway
+		throw new Error(`${providerName}?: ${e}`);
 	}
 }
 
 function proxy(image: string, settings: Settings): string {
 	// Create url and set standard things (like height, width etc.)
 	const proxiedImage = new URL(settings.proxyUrl);
-	proxiedImage.search = getCommonProxyQueries(settings, "apod");
+	proxiedImage.search = getCommonProxyQueries(settings, providerName);
 
 	// Setting ID
 	proxiedImage.searchParams.set("id", btoa(image.between("e/", ".jpg")));

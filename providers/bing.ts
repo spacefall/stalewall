@@ -2,6 +2,8 @@ import type { Settings } from "../src/types";
 import type { StalewallResponse } from "../src/types";
 import { getCommonProxyQueries, getData, randInt } from "../src/utils";
 
+const providerName = "bing";
+
 // Bing JSON response (used for type checking and code completion)
 export interface BingJson {
 	images: [
@@ -40,6 +42,7 @@ const markets = ["af-NA", "as-IN", "eu-ES", "zh-CN", "en-CA", "en-GB", "en-US", 
 
 export async function provide(set: Settings): Promise<StalewallResponse> {
 	const url = `https://www.bing.com/HPImageArchive.aspx?format=js&n=8&desc=1&idx=${randInt(8)}&mkt=${markets[randInt(markets.length)]}`;
+	console.info("URL:", url);
 	try {
 		const json = (await getData(url)) as BingJson;
 		const chosenOne = json.images[randInt(json.images.length)];
@@ -54,7 +57,7 @@ export async function provide(set: Settings): Promise<StalewallResponse> {
 
 		// JSON
 		return {
-			provider: "bing",
+			provider: providerName,
 			url: proxyUrl,
 			info: {
 				desc: {
@@ -73,15 +76,16 @@ export async function provide(set: Settings): Promise<StalewallResponse> {
 			},
 		};
 	} catch (e) {
-		// @ts-ignore
-		throw new Error(`bing: ${e.message}`);
+		if (e instanceof Error) throw new Error(`${providerName}: ${e.message}`);
+		// ? means that IDK what happened as the error is not an Error, but it has been thrown anyway
+		throw new Error(`${providerName}?: ${e}`);
 	}
 }
 
 function proxy(image: string, settings: Settings): string {
 	// Create url and set standard things (like height, width etc.)
 	const proxiedImage = new URL(settings.proxyUrl);
-	proxiedImage.search = getCommonProxyQueries(settings, "bing");
+	proxiedImage.search = getCommonProxyQueries(settings, providerName);
 
 	// Setting ID
 	proxiedImage.searchParams.set("id", btoa(image.between("id=", ".jpg")));

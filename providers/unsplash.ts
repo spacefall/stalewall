@@ -2,6 +2,8 @@ import type { Settings } from "../src/types";
 import type { StalewallResponse } from "../src/types";
 import { getData, randInt } from "../src/utils";
 
+const providerName = "unsplash";
+
 // Partial Unsplash API (full would have been over 200 lines, also it trims what's not present so it's a mess)
 export interface PartialUnsplashJson {
 	urls: {
@@ -30,13 +32,12 @@ export interface PartialUnsplashJson {
 const collections = ["collections=1053828", "collections=998309", "topics=wallpapers", "topics=nature"];
 
 export async function provide(set: Settings): Promise<StalewallResponse> {
-	console.info("Selected provider: unsplash");
 	const orient = (set.width ?? 16) > (set.height ?? 9) ? "landscape" : "portrait";
 	const url = `https://api.unsplash.com/photos/random?${collections[randInt(collections.length)]}&orientation=${orient}`;
 	console.info(`URL: ${url}`);
 	try {
 		const json = (await getData(url, {
-			Authorization: `Client-ID ${set.keys?.get("unsplash")}`,
+			Authorization: `Client-ID ${set.keys?.get(providerName)}`,
 			"Accept-Version": "v1",
 		})) as PartialUnsplashJson;
 
@@ -51,7 +52,7 @@ export async function provide(set: Settings): Promise<StalewallResponse> {
 
 		// JSON
 		const finalJSON: StalewallResponse = {
-			provider: "unsplash",
+			provider: providerName,
 			url: imageUrl,
 			info: {
 				desc: {},
@@ -77,8 +78,8 @@ export async function provide(set: Settings): Promise<StalewallResponse> {
 		}
 		return finalJSON;
 	} catch (e) {
-		if (e instanceof Error) throw new Error(`unsplash: ${e.message}`);
+		if (e instanceof Error) throw new Error(`${providerName}: ${e.message}`);
 		// ? means that IDK what happened as the error is not an Error, but it has been thrown anyway
-		throw new Error(`unsplash?: ${e}`);
+		throw new Error(`${providerName}?: ${e}`);
 	}
 }

@@ -1,6 +1,8 @@
 import type { Settings, StalewallResponse } from "../src/types";
 import { getCommonProxyQueries, getData, randInt } from "../src/utils";
 
+const providerName = "chromecast";
+
 // URL of the Chromecast homepage (contains a json with 50 wallpapers)
 const url = "https://google.com/cast/chromecast/home/";
 
@@ -29,7 +31,7 @@ export async function provide(set: Settings): Promise<StalewallResponse> {
 		const proxyUrl = set.proxy ? proxy(imageUrl, set) : imageUrl;
 
 		return {
-			provider: "chromecast",
+			provider: providerName,
 			url: proxyUrl,
 			info: {
 				credits: {
@@ -41,15 +43,16 @@ export async function provide(set: Settings): Promise<StalewallResponse> {
 			},
 		};
 	} catch (e) {
-		// @ts-ignore
-		throw new Error(`chromecast: ${e.message}`);
+		if (e instanceof Error) throw new Error(`${providerName}: ${e.message}`);
+		// ? means that IDK what happened as the error is not an Error, but it has been thrown anyway
+		throw new Error(`${providerName}?: ${e}`);
 	}
 }
 
 function proxy(image: string, settings: Settings): string {
 	// Create url and set standard things (like height, width etc.)
 	const proxiedImage = new URL(settings.proxyUrl);
-	proxiedImage.search = getCommonProxyQueries(settings, "chromecast");
+	proxiedImage.search = getCommonProxyQueries(settings, providerName);
 
 	// Set type and id (37 is the first character after "https://ccp-lh.googleusercontent.com/")
 	switch (image.charAt(37)) {
