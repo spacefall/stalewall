@@ -16,12 +16,14 @@ export function randInt(max: number) {
  * contains JSON content-type, otherwise returns it as a plain text string.
  *
  * @param {string} url - The URL to fetch the data from.
+ * @param {HeadersInit | undefined} head - Optional headers to pass to request
  * @return {Promise<object | string>} A promise that resolves to a JSON object if the response
  *         has JSON content-type, otherwise resolves to a text string.
  * @throws {Error} If the network response is not ok (response status is not 2xx).
  */
-export async function getData(url: string): Promise<object | string> {
-	const res = await fetch(url);
+export async function getData(url: string, head: HeadersInit | undefined = undefined): Promise<object | string> {
+	const req: RequestInit | undefined = head ? { headers: head } : undefined;
+	const res = await fetch(url, req);
 	if (!res.ok) {
 		throw new Error(`Response status: ${res.status} ${res.statusText}`);
 	}
