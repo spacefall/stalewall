@@ -4,23 +4,21 @@ import { getCommonProxyQueries, getData } from "../src/utils";
 
 const providerName = "apod";
 
-// APOD api JSON response (used for type checking and code completion)
-export interface ApodJson {
+// Partial APOD api JSON response (used for type checking and code completion)
+export interface PartialApodJson {
 	copyright?: string;
-	date: string;
 	explanation: string;
 	hdurl?: string;
 	media_type: string;
-	service_version: string;
 	title: string;
 	url: string;
-	thumbnail_url?: string;
 }
 
 export async function provide(set: Settings): Promise<StalewallResponse> {
 	const url = `https://api.nasa.gov/planetary/apod?count=1&thumbs=true&api_key=${set.keys?.get(providerName)}`;
 	try {
-		const json = ((await getData(url)) as ApodJson[])[0];
+		const json = ((await getData(url)) as PartialApodJson[])[0];
+		console.info("Original JSON:", json);
 
 		// TODO: resolve this?
 		// Error out if video is returned instead of image, the thumbnail could be used, but it's usually low-res and not well-made

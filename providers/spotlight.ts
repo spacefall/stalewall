@@ -19,55 +19,16 @@ interface SpotlightJsonExt {
 	};
 }
 
-// Spotlight JSON containing image and various info (used for type checking and code completion)
-interface SpotlightJsonInt {
-	f: string;
-	v: string;
-	rdr: [
-		{
-			c: string;
-			u: string;
-		},
-	];
+// Partial Spotlight JSON containing image and various info (used for type checking and code completion)
+interface PartialSpotlightJsonInt {
 	ad: {
 		landscapeImage: {
 			asset: string;
 		};
-		portraitImage: {
-			asset: string;
-		};
-		iconLabel: string;
 		iconHoverText: string;
 		title: string;
 		description: string;
 		copyright: string;
-		likeGlyph: string;
-		dislikeGlyph: string;
-		ctaText: string;
-		ctaUri: string;
-		relatedContent: [
-			{
-				glyph: string;
-				label: string;
-				actionUri: string;
-			},
-		];
-		relatedHotspots: [
-			{
-				glyph: string;
-				label: string;
-				actionUri: string;
-			},
-		];
-		entityId: string;
-	};
-	tracking: {
-		baseUri: string;
-	};
-	prm: {
-		_id: string;
-		_imp: string;
-		_flight: string;
 	};
 }
 
@@ -80,7 +41,7 @@ export async function provide(set: Settings): Promise<StalewallResponse> {
 	try {
 		// Gets the JSON from the api, and extracts the JSON of the first item (the only one I think, it always just returns one item for me)
 		const extJson = (await getData(url)) as SpotlightJsonExt;
-		const intJson = JSON.parse(extJson.batchrsp.items[0].item) as SpotlightJsonInt;
+		const intJson = JSON.parse(extJson.batchrsp.items[0].item) as PartialSpotlightJsonInt;
 
 		// Proxy if necessary
 		const imageUrl = set.proxy ? proxy(intJson.ad.landscapeImage.asset, set) : intJson.ad.landscapeImage.asset;

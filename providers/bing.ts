@@ -4,36 +4,18 @@ import { getCommonProxyQueries, getData, randInt } from "../src/utils";
 
 const providerName = "bing";
 
-// Bing JSON response (used for type checking and code completion)
-export interface BingJson {
+// Partial Bing JSON response (used for type checking and code completion)
+export interface PartialBingJson {
 	images: [
 		{
-			startdate: string;
-			fullstartdate: string;
-			enddate: string;
-			url: string;
 			urlbase: string;
 			copyright: string;
 			copyrightlink: string;
 			title: string;
 			desc: string;
 			desc2: string;
-			quiz: string;
-			wp: boolean;
-			hsh: string;
-			drk: number;
-			top: number;
-			bot: number;
-			hs: [];
 		},
 	];
-	tooltips: {
-		loading: string;
-		previous: string;
-		next: string;
-		walle: string;
-		walls: string;
-	};
 }
 
 // Array of markets that have different images in Bing's daily wallpaper
@@ -44,7 +26,7 @@ export async function provide(set: Settings): Promise<StalewallResponse> {
 	const url = `https://www.bing.com/HPImageArchive.aspx?format=js&n=8&desc=1&idx=${randInt(8)}&mkt=${markets[randInt(markets.length)]}`;
 	console.info("URL:", url);
 	try {
-		const json = (await getData(url)) as BingJson;
+		const json = (await getData(url)) as PartialBingJson;
 		const chosenOne = json.images[randInt(json.images.length)];
 
 		const imageUrl = `https://bing.com${chosenOne.urlbase}_UHD.jpg&p=0&pid=hp&qlt=${set.quality}`;
