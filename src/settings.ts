@@ -1,7 +1,16 @@
 import { defaultProviders, providersWithApiKeys } from "./providerList";
 import type { ProviderList, ProviderMap, Settings } from "./types";
 
-// parses the queries from the webserver to a settings object
+/**
+ * Parses and retrieves the settings from the given query parameters, environment variables,
+ * and provider map.
+ *
+ * @param {URLSearchParams} queries - The query parameters from the request.
+ * @param {Object.<string, string | undefined>} env - The environment variables that may contain
+ *    configuration such as the proxy URL.
+ * @param {ProviderMap} provs - Map of providers that is then filtered according to the queries.
+ * @return {Settings} - The settings object containing the parsed and configured settings.
+ */
 export function getSettings(
 	queries: URLSearchParams,
 	env: { [type: string]: string | undefined },
@@ -26,7 +35,8 @@ export function getSettings(
 	}
 
 	// prov -> ProviderList
-	const { providers, apiKeys } = parseProviders(queries.get("prov")?.split(",") ?? defaultProviders, provs, env);
+	const provList = queries.get("prov")?.split(",") ?? defaultProviders;
+	const { providers, apiKeys } = parseProviders(provList, provs, env);
 	settings.providers = providers;
 	if (apiKeys.size > 0) {
 		settings.keys = apiKeys;
@@ -36,8 +46,13 @@ export function getSettings(
 	settings.proxyUrl = validateProxyURL(env.PROXY_URL);
 
 	// logging
-	console.info("Settings parsed:", settings);
-	console.info("Providers requested:", providers);
+	console.group("Settings");
+	console.log("quality:", settings.quality);
+	console.log("proxy:", settings.proxy);
+	if (res) console.log("res:", settings.width, settings.height);
+	console.log("providers:", provList);
+	console.groupEnd();
+
 	return settings;
 }
 

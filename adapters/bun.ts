@@ -1,23 +1,32 @@
 import { getWall } from "../src/getWall";
 import { devLoadProviders } from "../src/providersDev";
 
+// Load providers from folder
 const provs = devLoadProviders();
 
 const server = Bun.serve({
 	port: 3000,
 	async fetch(req) {
-		const cputime = process.cpuUsage();
 		const url = new URL(req.url);
 
-		// stopping any request not on root from continuing
+		// Block unwanted requests
 		if (url.pathname !== "/") {
 			return new Response("Requested api endpoint does not exist", { status: 404 });
 		}
+
+		// Start measuring cpu time
+		const cputime = process.cpuUsage();
+		// Get the wallpaper
 		const wall = await getWall(url, provs, process.env);
+		// Stop measuring
 		const finalcputime = process.cpuUsage(cputime);
-		console.log(
-			`CPU time for request:\nUser: ${finalcputime.user / 1000}ms System: ${finalcputime.system / 1000}ms`,
-		);
+
+		// Print the results (cpu time)
+		console.group("CPU Time");
+		console.log(`User: ${finalcputime.user / 1000}ms`);
+		console.log(`System: ${finalcputime.system / 1000}ms`);
+		console.log(`Total: ${(finalcputime.user + finalcputime.system) / 1000}ms`);
+		console.groupEnd();
 		return wall;
 	},
 });

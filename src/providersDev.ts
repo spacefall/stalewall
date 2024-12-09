@@ -2,7 +2,7 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 import type { Provider, ProviderMap } from "./types";
 
-// loads providers from "providers" folder
+// Loads all js/ts files in the providers folder and adds all valid providers to a providermap
 export function devLoadProviders(): ProviderMap {
 	const providers: ProviderMap = new Map<string, Provider>();
 	const providerPath = path.join(__dirname, "..", "providers");
@@ -16,7 +16,7 @@ export function devLoadProviders(): ProviderMap {
 				.then((module) => {
 					if (typeof module.provide === "function") {
 						providers.set(file.before("."), module.provide);
-						console.log(`Loaded module ${file.before(".")}`);
+						console.log(`Loaded module: ${file.before(".")}`);
 					} else {
 						console.warn(`Module ${file.before(".")} does not contain function 'provide'`);
 					}

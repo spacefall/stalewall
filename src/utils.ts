@@ -1,11 +1,25 @@
 // Returns a random int between 0 and nax-1
 import type { Settings } from "./types";
 
+/**
+ * Generates a random integer between 0 (inclusive) and the specified maximum value (exclusive).
+ *
+ * @param {number} max - The upper bound for the random integer generation, should be a positive number.
+ * @return {number} A random integer between 0 and max - 1.
+ */
 export function randInt(max: number) {
 	return ~~(Math.random() * ~~max);
 }
 
-// Fetches a specified url, and returns an object (json) if the page returns a json otherwise it returns the text
+/**
+ * Fetches data from the specified URL and returns it as a JSON object if the response
+ * contains JSON content-type, otherwise returns it as a plain text string.
+ *
+ * @param {string} url - The URL to fetch the data from.
+ * @return {Promise<object | string>} A promise that resolves to a JSON object if the response
+ *         has JSON content-type, otherwise resolves to a text string.
+ * @throws {Error} If the network response is not ok (response status is not 2xx).
+ */
 export async function getData(url: string): Promise<object | string> {
 	const res = await fetch(url);
 	if (!res.ok) {
@@ -42,6 +56,13 @@ String.prototype.between = function (this: string, before: string, after: string
 	return this.substring(index + before.length, endIndex);
 };
 
+/**
+ * Constructs a query string with common proxy parameters based on the provided settings and provider.
+ *
+ * @param {Settings} settings - A Settings object containing configuration.
+ * @param {string} provider - The provider name to be included in the query string.
+ * @return {string} A URL query string with the provider and optionally width and height parameters.
+ */
 export function getCommonProxyQueries(settings: Settings, provider: string): string {
 	const params = new URLSearchParams();
 
