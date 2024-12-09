@@ -26,7 +26,10 @@ export async function getWall(url: URL, provs: ProviderMap, env: EnvVars | NodeJ
 
 	// Run the provider with the parsed settings, return 500 error if it fails
 	try {
+		console.group("Provider");
 		const apiResp = await settings.providers[randInt(settings.providers.length)](settings);
+		console.log("Returned JSON:", apiResp);
+		console.groupEnd();
 		return new Response(JSON.stringify(apiResp), {
 			headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
 		});
