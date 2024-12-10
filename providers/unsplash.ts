@@ -25,16 +25,51 @@ export interface PartialUnsplashJson {
 	alt_description?: string;
 }
 
-// A list of collections and topics to randomly use
-// Collections are in order:
-//	- Tabliss
-//	- Stellar Photos
-const collections = ["collections=1053828", "collections=998309", "topics=wallpapers", "topics=nature"];
+// A map of collections to randomly use and how many images they contain currently (imprecise as it doesn't separate portrait from landscape pics)
+// They are in order from the smallest number of photos to biggest
+const collections: Map<string, number> = new Map([
+	["89", 7], // Collection 89
+	["96", 7], // Collection 96
+	["92", 8], // Collection 92
+	["101", 8], // Collection 101
+	["57", 9], // Collection 57
+	["58", 9], // Collection 58
+	["80", 9], // Collection 80
+	["104", 9], // Collection 104
+	["2", 10], // Collection 2
+	["49", 10], // Collection 49
+	["62", 10], // Collection 62
+	["72", 10], // Collection 72
+	["90", 10], // Collection 90
+	["91", 10], // Collection 91
+	["103", 10], // Collection 103
+	["111", 10], // Collection 111
+	["113", 10], // Collection 113
+	["235", 18], // Best of NASA
+	["9670693", 36], // Arctic
+	["910", 169], // Earth day
+	["9270463", 210], // Lush life
+	["17098", 329], // Floral Beauty
+	["1053828", 552], // Tabliss
+	["998309", 764], // Stellar Photos
+	["3348849", 1271], // Architecture
+	["3330448", 2259], // Nature
+	["1459961", 2340], // Photo of the Day (Archive)
+	["XwrRKbw8nSI", 3037], // Minim curated
+	["317099", 8504], // Unsplash editorial
+]);
 
 export async function provide(set: Settings): Promise<StalewallResponse> {
 	const orient = (set.width ?? 16) > (set.height ?? 9) ? "landscape" : "portrait";
-	const url = `https://api.unsplash.com/photos/random?${collections[randInt(collections.length)]}&orientation=${orient}`;
-	console.info(`URL: ${url}`);
+	// Gets a collection from the list above "randomly", giving priority to the collections with the biggest number of photos
+	// Also 1/2 of the time it will just skip all of this and just get a picture from the wallpapers or nature topics
+	const randColl =
+		randInt(3) === 0
+			? ["topics=wallpapers", "topics=nature"][randInt(2)]
+			: `collection=${weightedRand(collections)}`;
+	console.info("Collection:", randColl);
+	const url = `https://api.unsplash.com/photos/random?${randColl}&orientation=${orient}`;
+	console.info("URL:", url);
 	try {
 		const json = (await getData(url, {
 			Authorization: `Client-ID ${set.keys?.get(providerName)}`,
@@ -82,4 +117,19 @@ export async function provide(set: Settings): Promise<StalewallResponse> {
 		// ? means that IDK what happened as the error is not an Error, but it has been thrown anyway
 		throw new Error(`${providerName}?: ${e}`);
 	}
+}
+
+function weightedRand(collections: Map<string, number>): string {
+	let sum = 0;
+	for (const v of collections.values()) {
+		sum += v;
+	}
+	const rand = randInt(sum);
+	let current = 0;
+	for (const [k, v] of collections) {
+		current += v;
+		if (rand < current) return k;
+	}
+	// wtf happened
+	return "2"; // it's a valid collection id
 }
