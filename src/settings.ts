@@ -35,7 +35,11 @@ export function getSettings(
 	}
 
 	// prov -> ProviderList
-	const provList = queries.get("prov")?.split(",") ?? defaultProviders;
+	const provQuery = queries.get("prov");
+	let provList: string[] = defaultProviders;
+	if (provQuery) {
+		provList = decodeURIComponent(provQuery).split(",");
+	}
 	const { providers, apiKeys } = parseProviders(provList, provs, env);
 	settings.providers = providers;
 	if (apiKeys.size > 0) {
