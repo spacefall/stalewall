@@ -31,7 +31,11 @@ export async function getWall(url: URL, provs: ProviderMap, env: EnvVars | NodeJ
 		console.log("Returned JSON:", apiResp);
 		console.groupEnd();
 		return new Response(JSON.stringify(apiResp), {
-			headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
+			headers: {
+				"Content-Type": "application/json",
+				"Access-Control-Allow-Origin": "*",
+				"Access-Control-Allow-Headers": "*",
+			},
 		});
 	} catch (e) {
 		console.error(e);
