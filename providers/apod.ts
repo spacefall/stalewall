@@ -43,7 +43,7 @@ export async function provide(set: Settings): Promise<StalewallResponse> {
 					long: json.explanation,
 				},
 				credits: {
-					copyright: json.copyright ?? "Public domain, NASA",
+					copyright: json.copyright ?? "Public domain/NASA",
 				},
 			},
 		};

@@ -57,7 +57,7 @@ export async function provide(set: Settings): Promise<StalewallResponse> {
 					long: intJson.ad.description,
 				},
 				credits: {
-					copyright: intJson.ad.copyright,
+					copyright: intJson.ad.copyright.substring(2),
 				},
 			},
 		};
