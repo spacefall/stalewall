@@ -1,13 +1,13 @@
 # stalewall
 A simple to use (random) wallpaper api
 
-A public instance of the api can be found here: [stalewall.spacefell.workers.dev](https://stalewall.spacefell.workers.dev)
-A (basic) demo can be found [here](https://spacefall.github.io/stalewall-demo/) (just grabs a wallpaper and shows the info related to it)
-Another example can be found [here](https://github.com/spacefall/stalewall-desktop) (grabs a wallpaper and sets it as the desktop wallpaper)
-Relies on [stalewall-proxy](https://github.com/spacefall/stalewall-proxy) to crop and proxy images with cors
+A public instance of the api can be found here: [stalewall.spacefell.workers.dev](https://stalewall.spacefell.workers.dev)  
+A (basic) demo can be found [here](https://spacefall.github.io/stalewall-demo/) (just grabs a wallpaper and shows the info related to it)  
+Another example can be found [here](https://github.com/spacefall/stalewall-desktop) (grabs a wallpaper and sets it as the desktop wallpaper)  
+Relies on [stalewall-proxy](https://github.com/spacefall/stalewall-proxy) to crop and proxy images with cors  
 
 ## Hosting
-This repo is ready to be deployed to Cloudflare Workers (and is in fact deployed [there](https://stalewall.spacefell.workers.dev)), just run `wrangler deploy`.
+This repo is ready to be deployed to Cloudflare Workers (and is in fact deployed [there](https://stalewall.spacefell.workers.dev)), just run `wrangler deploy`.  
 Alternatively, the repo includes a basic Bun server that functions the same way as the worker. (it may output more data for developement purposes)
 
 If you're considering self-hosting, you should also deploy a [stalewall-proxy](https://github.com/spacefall/stalewall-proxy) as this api relies on it for image manipulation and proxying, more info in its repo.
@@ -26,7 +26,7 @@ Stalewall can get a random wallpaper from various sources, these sources are cal
 **Note:** value in parentheses is the one to use for the `prov` query
 
 
-*Also please note that each provider will return images with different resolutions, some will output a 4k image and others 1600x900 max, it's hard to know precisely what resolution the providers return because most return a variety of resolutions.
+*Also please note that each provider will return images with different resolutions, some will output a 4k image and others 1600x900 max, it's hard to know precisely what resolution the providers return because most return a variety of resolutions.  
 For example, Spotlight can return either 4k or 1080p images, or again, the firetv provider can return 2048x1152 images or 1600x900 images.*
 
 ## Parameters
@@ -85,5 +85,5 @@ For a more informative description of the values:
 | info.credits.urls.image  | URL to original source of image returned by provider                                         |
 
 ## Thanks
-The Spotlight provider was made with the research made by ORelio [here](https://github.com/ORelio/Spotlight-Downloader)
+The Spotlight provider was made with the research made by ORelio [here](https://github.com/ORelio/Spotlight-Downloader)  
 The FireTV provider was using data from [this](https://www.reddit.com/r/fireTV/comments/wzt2yg/comment/im5e42b/) reddit thread, the same data was made into a [json](https://gist.github.com/spacefall/0cc095656f67e826977c84eecdd89b3c) before discovering that the firetv grabs a [json with image urls by itself](https://d21m0ezw6fosyw.cloudfront.net/manifest/collections_en_US_v3.json)
