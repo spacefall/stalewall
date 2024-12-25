@@ -1,5 +1,5 @@
 # stalewall
-A simple to use random wallpaper api
+A simple to use random wallpaper api  
 Relies on [stalewall-proxy](https://github.com/spacefall/stalewall-proxy) to crop and proxy images
 
 ## Usage
