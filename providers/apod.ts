@@ -15,19 +15,23 @@ export interface PartialApodJson {
 }
 
 export async function provide(set: Settings): Promise<StalewallResponse> {
-	const url = `https://api.nasa.gov/planetary/apod?count=1&thumbs=true&api_key=${set.keys?.get(providerName)}`;
+	const url = `https://api.nasa.gov/planetary/apod?count=3&thumbs=true&api_key=${set.keys?.get(providerName)}`;
 	try {
-		const json = ((await getData(url)) as PartialApodJson[])[0];
-		console.info("Original JSON:", json);
+		const jsonList = (await getData(url)) as PartialApodJson[];
+		let jsonIndex = 0;
 
-		// TODO: resolve this?
-		// Error out if video is returned instead of image, the thumbnail could be used, but it's usually low-res and not well-made
-		// This could also be replaced with a while media_type != "image" { getData(url) } but the api has a limit and I don't want (accidentally) to spam it
-		// Also not many videos show up so it may not even show up that frequently
-		// This could also be resolved by upping the count and choosing a random one until media_type == "image"
-		if (json.media_type !== "image") {
-			throw new Error("media_type is not image");
+		// Kinda solved the issue with the videos, it just tries 3 times
+		while (jsonList[jsonIndex].media_type !== "image" && jsonIndex < jsonList.length) {
+			jsonIndex++;
 		}
+
+		// Shouldn't happen really (hopefully)
+		if (jsonList[jsonIndex].media_type !== "image") {
+			throw new Error("media_type is not image after 3 attempts");
+		}
+
+		const json = jsonList[jsonIndex];
+		console.info("Original JSON:", json);
 
 		// Proxy if necessary
 		const imageUrl = json.hdurl ?? json.url;
