@@ -5,6 +5,7 @@ import * as earth from "../providers/earthview";
 import * as ftv from "../providers/firetv";
 import * as spot from "../providers/spotlight";
 import * as unspl from "../providers/unsplash";
+import * as pex from "../providers/pexels";
 import type { Provider, ProviderMap } from "./types";
 
 // Static map of enabled providers, this is for Cloudflare Workers as it can't use the fs module.
@@ -17,11 +18,20 @@ export const providers: ProviderMap = new Map<string, Provider>([
 	["spotlight", spot.provide],
 	["apod", apod.provide],
 	["unsplash", unspl.provide],
+	["pexels", pex.provide],
 ]);
 
 // Providers to use by default, any provider not in the list won't appear automatically but can be used with the ?prov query
-export const defaultProviders: Array<string> = ["bing", "chromecast", "earthview", "firetv", "spotlight", "unsplash"];
+export const defaultProviders: Array<string> = [
+	"bing",
+	"chromecast",
+	"earthview",
+	"firetv",
+	"spotlight",
+	"unsplash",
+	"pexels",
+];
 
 // Providers that have an api key (duh), when a provider in the list is encountered while parsing queries,
 // the function will check if the key is present and throw an error if the key is non-existent
-export const providersWithApiKeys: Array<string> = ["apod", "unsplash"];
+export const providersWithApiKeys: Array<string> = ["apod", "unsplash", "pexels"];
