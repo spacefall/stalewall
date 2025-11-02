@@ -22,15 +22,7 @@ export const providers: ProviderMap = new Map<string, Provider>([
 ]);
 
 // Providers to use by default, any provider not in the list won't appear automatically but can be used with the ?prov query
-export const defaultProviders: Array<string> = [
-	"bing",
-	"chromecast",
-	"earthview",
-	"firetv",
-	"spotlight",
-	"unsplash",
-	"pexels",
-];
+export const defaultProviders: Array<string> = ["bing", "chromecast", "earthview", "firetv", "spotlight"];
 
 // Providers that have an api key (duh), when a provider in the list is encountered while parsing queries,
 // the function will check if the key is present and throw an error if the key is non-existent

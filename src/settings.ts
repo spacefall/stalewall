@@ -39,6 +39,8 @@ export function getSettings(
 	let provList: string[] = defaultProviders;
 	if (provQuery) {
 		provList = decodeURIComponent(provQuery).split(",");
+	} else if (env.PROVIDER_LIST) {
+		provList = env.PROVIDER_LIST.split(",").map((p) => p.trim());
 	}
 	const { providers, apiKeys } = parseProviders(provList, provs, env);
 	settings.providers = providers;

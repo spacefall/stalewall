@@ -19,6 +19,7 @@ export interface Settings {
 // Environment variables for Cloudflare Workers
 export type EnvVars = {
 	PROXY_URL: string;
+	PROVIDER_LIST: string | undefined;
 	APOD_API_KEY: string | undefined;
 	UNSPLASH_API_KEY: string | undefined;
 	PEXELS_API_KEY: string | undefined;
